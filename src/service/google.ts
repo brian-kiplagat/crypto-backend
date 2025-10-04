@@ -2,6 +2,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 import env from '../lib/env.js';
 import { logger } from '../lib/logger.js';
+import { BitgoService } from './bitgo.ts';
 import type { UserService } from './user.js';
 
 /**
@@ -10,18 +11,19 @@ import type { UserService } from './user.js';
 export class GoogleService {
   private client: OAuth2Client;
   private userService: UserService;
-
+  private bitgoService: BitgoService;
   /**
    * Creates an instance of GoogleService
    * @param {UserService} userService - Service for managing users
    */
-  constructor(userService: UserService) {
+  constructor(userService: UserService, bitgoService: BitgoService) {
     this.client = new OAuth2Client({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       redirectUri: env.GOOGLE_REDIRECT_URL,
     });
     this.userService = userService;
+    this.bitgoService = bitgoService;
   }
 
   /**
@@ -82,6 +84,9 @@ export class GoogleService {
           },
         );
         user = await this.userService.findByEmail(userInfo.email);
+        if (user) {
+          await this.bitgoService.createAddress(user.id, userInfo.email, 10);
+        }
       } else if (!user.google_id) {
         // Update existing user with Google info
         await this.userService.update(user.id, {

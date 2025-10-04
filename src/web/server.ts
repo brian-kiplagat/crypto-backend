@@ -10,11 +10,13 @@ import { connection } from '../lib/queue.js';
 import { EmailRepository } from '../repository/email.ts';
 import { NotificationRepository } from '../repository/notification.ts';
 import { UserRepository } from '../repository/user.js';
+import { WalletRepository } from '../repository/wallet.ts';
 import { BitgoService } from '../service/bitgo.ts';
 import { EmailService } from '../service/email.ts';
 import { GoogleService } from '../service/google.js';
 import { NotificationService } from '../service/notification.ts';
 import { UserService } from '../service/user.js';
+import { WalletService } from '../service/wallet.ts';
 import { Tasker } from '../task/tasker.js';
 import { AuthController } from './controller/auth.js';
 import { EmailController } from './controller/email.ts';
@@ -73,12 +75,14 @@ export class Server {
     const userRepo = new UserRepository();
     const emailRepo = new EmailRepository();
     const notificationRepo = new NotificationRepository();
+    const walletRepo = new WalletRepository();
     // Setup services
     const notificationService = new NotificationService(notificationRepo);
 
     const userService = new UserService(userRepo);
     const emailService = new EmailService(emailRepo);
-    const bitgoService = new BitgoService(userService);
+    const walletService = new WalletService(walletRepo);
+    const bitgoService = new BitgoService(userService, walletService);
     // Setup workers
     this.registerWorker(userService, emailService);
 
@@ -88,7 +92,7 @@ export class Server {
     const emailController = new EmailController(emailService, userService);
 
     // Add Google service and controller
-    const googleService = new GoogleService(userService);
+    const googleService = new GoogleService(userService, bitgoService);
     const googleController = new GoogleController(googleService, userRepo);
 
     const notificationController = new NotificationController(notificationService, userService);

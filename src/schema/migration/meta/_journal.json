@@ -15,6 +15,13 @@
       "when": 1759603158377,
       "tag": "0001_clammy_darwin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1759607807184,
+      "tag": "0002_furry_electro",
+      "breakpoints": true
     }
   ]
 }

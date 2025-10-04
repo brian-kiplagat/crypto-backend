@@ -77,13 +77,28 @@ export const emailsSchema = mysqlTable('emails', {
   updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
 });
 
+// Add to your schema
+export const bitcoinAddressSchema = mysqlTable('bitcoin_addresses', {
+  id: serial('id').primaryKey(),
+  user_id: int('user_id').references(() => userSchema.id),
+  address: varchar('address', { length: 255 }).notNull().unique(),
+  wallet_id: varchar('wallet_id', { length: 255 }).notNull(),
+  label: varchar('label', { length: 255 }).notNull(),
+  chain: int('chain').notNull(),
+  index: int('index').notNull(),
+  address_type: varchar('address_type', { length: 50 }),
+  created_at: timestamp('created_at').defaultNow(),
+  metadata: json('metadata'),
+});
+
 export type Email = typeof emailsSchema.$inferSelect;
 export type Notification = typeof notificationsSchema.$inferSelect;
 export type NewNotification = typeof notificationsSchema.$inferInsert;
 export type NewEmail = typeof emailsSchema.$inferInsert;
 export type User = typeof userSchema.$inferSelect;
-
+export type BitcoinAddress = typeof bitcoinAddressSchema.$inferSelect;
 export type NewUser = typeof userSchema.$inferInsert;
+export type NewBitcoinAddress = typeof bitcoinAddressSchema.$inferInsert;
 
 // Define relations
 
@@ -101,4 +116,9 @@ export const mailRelations = relations(emailsSchema, ({ one }) => ({
   }),
 }));
 
-// Define relations
+export const bitcoinAddressRelations = relations(bitcoinAddressSchema, ({ one }) => ({
+  user: one(userSchema, {
+    fields: [bitcoinAddressSchema.user_id],
+    references: [userSchema.id],
+  }),
+}));

@@ -94,15 +94,15 @@ export class AuthController {
       if (existingUser) {
         return serveBadRequest(c, ERRORS.USER_EXISTS);
       }
-      //create wallet
-      const address = await this.bitgoService.createAddress(email, 10);
-      logger.info(address);
+
       await this.service.create(name, email, password, 'user', fullNumber);
 
       const user = await this.service.findByEmail(email);
       if (!user) {
         return serveInternalServerError(c, new Error(ERRORS.USER_NOT_FOUND));
       }
+
+      await this.bitgoService.createAddress(user.id, email, 10);
 
       await sendWelcomeEmailAsync(user.id);
 
