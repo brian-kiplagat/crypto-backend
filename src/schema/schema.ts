@@ -70,7 +70,7 @@ export const emailsSchema = mysqlTable('emails', {
   checked: boolean('checked').default(false),
   starred: boolean('starred').default(false),
   flagged: boolean('flagged').default(false),
-  host_id: int('host_id')
+  user_id: int('user_id')
     .references(() => userSchema.id)
     .notNull(),
   status: mysqlEnum('status', ['draft', 'sent', 'failed']).default('draft'),
@@ -95,8 +95,8 @@ export const notificationRelations = relations(notificationsSchema, ({ one }) =>
 }));
 
 export const mailRelations = relations(emailsSchema, ({ one }) => ({
-  host: one(userSchema, {
-    fields: [emailsSchema.host_id],
+  user: one(userSchema, {
+    fields: [emailsSchema.user_id],
     references: [userSchema.id],
   }),
 }));
