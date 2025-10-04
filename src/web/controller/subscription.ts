@@ -71,16 +71,8 @@ export class SubscriptionController {
       if (!user) {
         return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
       }
-      if (!user.subscription_id) {
-        return serveBadRequest(c, ERRORS.SUBSCRIPTION_NOT_FOUND);
-      }
 
-      await this.subscriptionService.cancelSubscription(
-        user.id,
-        user.email,
-        user.name,
-        user.subscription_id,
-      );
+      await this.subscriptionService.cancelSubscription(user.id, user.email, user.name, 'test');
       return serveData(c, { message: 'Subscription cancelled successfully' });
     } catch (error) {
       logger.error(error);
@@ -102,9 +94,6 @@ export class SubscriptionController {
       }
 
       const subscriptions = await this.subscriptionService.getSubscriptions(user.id);
-      if (!user.stripe_customer_id) {
-        return serveBadRequest(c, ERRORS.STRIPE_CUSTOMER_ID_NOT_FOUND);
-      }
       return serveData(c, { subscriptions });
     } catch (error) {
       logger.error('Error getting subscriptions:', error);
