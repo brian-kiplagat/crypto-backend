@@ -7,8 +7,8 @@ import { encrypt, verify } from '../../lib/encryption.js';
 import env from '../../lib/env.js';
 import { encode, type JWTPayload } from '../../lib/jwt.js';
 import { logger } from '../../lib/logger.ts';
-import type { UserRepository } from '../../repository/user.js';
 import { userSchema } from '../../schema/schema.ts';
+import { BitgoService } from '../../service/bitgo.ts';
 import type { UserService } from '../../service/user.js';
 import sendWelcomeEmailAsync from '../../task/client/sendWelcomeEmailAsync.js';
 import { sendTransactionalEmail } from '../../task/email-processor.ts';
@@ -28,11 +28,11 @@ import { serializeUser } from './serializer/user.js';
 
 export class AuthController {
   private service: UserService;
-  private userRepository: UserRepository;
+  private bitgoService: BitgoService;
 
-  constructor(userService: UserService, userRepository: UserRepository) {
+  constructor(userService: UserService, bitgoService: BitgoService) {
     this.service = userService;
-    this.userRepository = userRepository;
+    this.bitgoService = bitgoService;
   }
 
   /**
@@ -83,30 +83,35 @@ export class AuthController {
    * @throws {Error} When registration fails or user already exists
    */
   public register = async (c: Context) => {
-    const body: RegistrationBody = await c.req.json();
     try {
-      const fullNumber = body.dial_code + body.phone;
+      const body: RegistrationBody = await c.req.json();
+      const { name, email, dial_code, phone, password } = body;
+      const fullNumber = dial_code + phone;
       if (!isValidPhoneNumber(fullNumber)) {
         return serveBadRequest(c, ERRORS.INVALID_PHONE_NUMBER);
       }
-      const existingUser = await this.service.findByEmail(body.email);
+      const existingUser = await this.service.findByEmail(email);
       if (existingUser) {
         return serveBadRequest(c, ERRORS.USER_EXISTS);
       }
-      await this.service.create(body.name, body.email, body.password, 'user', fullNumber);
+      //create wallet
+      const address = await this.bitgoService.createAddress(email, 10);
+      logger.info(address);
+      await this.service.create(name, email, password, 'user', fullNumber);
+
+      const user = await this.service.findByEmail(email);
+      if (!user) {
+        return serveInternalServerError(c, new Error(ERRORS.USER_NOT_FOUND));
+      }
+
+      await sendWelcomeEmailAsync(user.id);
+
+      const token = await encode(user.id, user.email);
+      const serializedUser = await serializeUser(user);
+      return serveData(c, { token, user: serializedUser });
     } catch (err) {
       return serveInternalServerError(c, err);
     }
-    const user = await this.service.findByEmail(body.email);
-    if (!user) {
-      return serveInternalServerError(c, new Error(ERRORS.USER_NOT_FOUND));
-    }
-
-    await sendWelcomeEmailAsync(user.id);
-
-    const token = await encode(user.id, user.email);
-    const serializedUser = await serializeUser(user);
-    return serveData(c, { token, user: serializedUser });
   };
 
   /**

@@ -10,6 +10,7 @@ import { connection } from '../lib/queue.js';
 import { EmailRepository } from '../repository/email.ts';
 import { NotificationRepository } from '../repository/notification.ts';
 import { UserRepository } from '../repository/user.js';
+import { BitgoService } from '../service/bitgo.ts';
 import { EmailService } from '../service/email.ts';
 import { GoogleService } from '../service/google.js';
 import { NotificationService } from '../service/notification.ts';
@@ -77,11 +78,12 @@ export class Server {
 
     const userService = new UserService(userRepo);
     const emailService = new EmailService(emailRepo);
+    const bitgoService = new BitgoService(userService);
     // Setup workers
     this.registerWorker(userService, emailService);
 
     // Setup controllers
-    const authController = new AuthController(userService, userRepo);
+    const authController = new AuthController(userService, bitgoService);
 
     const emailController = new EmailController(emailService, userService);
 
