@@ -1,4 +1,5 @@
 import { BitGoAPI } from '@bitgo/sdk-api';
+import { Btc } from '@bitgo/sdk-coin-btc';
 
 import env from '../lib/env.ts';
 import { logger } from '../lib/logger.ts';
@@ -16,6 +17,7 @@ export class BitgoService {
       env: 'prod',
       accessToken: env.BITGO_ACCESS_TOKEN,
     });
+    this.bitgo.register('btc', Btc.createInstance);
   }
 
   /**
