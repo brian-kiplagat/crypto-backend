@@ -13,7 +13,6 @@ import { UserRepository } from '../repository/user.js';
 import { EmailService } from '../service/email.ts';
 import { GoogleService } from '../service/google.js';
 import { NotificationService } from '../service/notification.ts';
-import { S3Service } from '../service/s3.js';
 import { UserService } from '../service/user.js';
 import { Tasker } from '../task/tasker.js';
 import { AuthController } from './controller/auth.js';
@@ -82,20 +81,20 @@ export class Server {
     const notificationRepo = new NotificationRepository();
     // Setup services
     const notificationService = new NotificationService(notificationRepo);
-    const s3Service = new S3Service();
+   
     const userService = new UserService(userRepo, null, null, null, null);
     const emailService = new EmailService(emailRepo);
     // Setup workers
     this.registerWorker(userService, emailService);
 
     // Setup controllers
-    const authController = new AuthController(userService, null, s3Service, null, userRepo);
+    const authController = new AuthController(userService, null, null, null, userRepo);
 
     const emailController = new EmailController(emailService, userService, null, null, null, null);
 
     // Add Google service and controller
     const googleService = new GoogleService(userService, null);
-    const googleController = new GoogleController(googleService, s3Service, userRepo);
+    const googleController = new GoogleController(googleService, userRepo);
 
     const notificationController = new NotificationController(notificationService, userService);
     // Register routes

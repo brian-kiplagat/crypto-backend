@@ -52,10 +52,7 @@ process.on('SIGTERM', () => {
 
   logger.info('Closing http server');
   web.close(async () => {
-    logger.info('Closing WebSocket server');
-    server.closeWebSocketService();
-
-    logger.info('Closing worker');
+      logger.info('Closing worker');
     await server.shutDownWorker();
 
     logger.info('Closing database connection');
