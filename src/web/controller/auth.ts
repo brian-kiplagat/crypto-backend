@@ -12,7 +12,6 @@ import { userSchema } from '../../schema/schema.ts';
 import type { UserService } from '../../service/user.js';
 import sendWelcomeEmailAsync from '../../task/client/sendWelcomeEmailAsync.js';
 import { sendTransactionalEmail } from '../../task/email-processor.ts';
-import { getContentType } from '../../util/string.ts';
 import type {
   EmailVerificationBody,
   InAppResetPasswordBody,
@@ -22,7 +21,6 @@ import type {
   RequestResetPasswordBody,
   ResetPasswordBody,
   UpdateUserDetailsBody,
-  UploadProfileImageBody,
 } from '../validator/user.js';
 import { ERRORS, MAIL_CONTENT, serveBadRequest, serveInternalServerError } from './resp/error.js';
 import { serveData } from './resp/resp.js';
@@ -32,10 +30,7 @@ export class AuthController {
   private service: UserService;
   private userRepository: UserRepository;
 
-  constructor(
-    userService: UserService,
-    userRepository: UserRepository,
-  ) {
+  constructor(userService: UserService, userRepository: UserRepository) {
     this.service = userService;
     this.userRepository = userRepository;
   }
@@ -407,6 +402,4 @@ export class AuthController {
       return serveInternalServerError(c, error);
     }
   };
-
-
 }

@@ -20,10 +20,7 @@ import { EmailController } from './controller/email.ts';
 import { GoogleController } from './controller/google.js';
 import { NotificationController } from './controller/notification.ts';
 import { ERRORS, serveInternalServerError, serveNotFound } from './controller/resp/error.js';
-import {
-  toggleBulkEmailValidator,
-  updateBulkEmailValidator,
-} from './validator/email.ts';
+import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
 import {
   createNotificationValidator,
   updateNotificationValidator,

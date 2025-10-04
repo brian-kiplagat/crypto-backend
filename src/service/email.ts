@@ -1,10 +1,7 @@
 import env from '../lib/env.ts';
 import { logger } from '../lib/logger.ts';
 import type { EmailRepository } from '../repository/email.ts';
-import type {
-  Email,
-  NewEmail,
-} from '../schema/schema.ts';
+import type { Email, NewEmail } from '../schema/schema.ts';
 import processBulkEmailAsync from '../task/client/processBulkEmail.ts';
 import processEmailAsync from '../task/client/processEmailAsync.ts';
 
@@ -52,7 +49,6 @@ export class EmailService {
       throw error;
     }
   }
-
 
   /**
    * Bulk adds emails to the database
@@ -201,10 +197,4 @@ export class EmailService {
       throw error;
     }
   }
-
-
-
-
-
-
 }
