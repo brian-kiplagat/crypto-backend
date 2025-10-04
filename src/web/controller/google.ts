@@ -4,7 +4,6 @@ import { encode } from '../../lib/jwt.js';
 import { logger } from '../../lib/logger.js';
 import type { UserRepository } from '../../repository/user.js';
 import type { GoogleService } from '../../service/google.js';
-
 import { ERRORS, serveBadRequest, serveNotFound } from './resp/error.ts';
 import { serializeUser } from './serializer/user.js';
 

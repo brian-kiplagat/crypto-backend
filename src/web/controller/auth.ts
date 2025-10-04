@@ -9,9 +9,6 @@ import { encode, type JWTPayload } from '../../lib/jwt.js';
 import { logger } from '../../lib/logger.ts';
 import type { UserRepository } from '../../repository/user.js';
 import { userSchema } from '../../schema/schema.ts';
-import type { AssetService } from '../../service/asset.js';
-import type { BusinessService } from '../../service/business.js';
-import type { S3Service } from '../../service/s3.js';
 import type { UserService } from '../../service/user.js';
 import sendWelcomeEmailAsync from '../../task/client/sendWelcomeEmailAsync.js';
 import { sendTransactionalEmail } from '../../task/email-processor.ts';
@@ -33,22 +30,13 @@ import { serializeUser } from './serializer/user.js';
 
 export class AuthController {
   private service: UserService;
-  private businessService: BusinessService;
-  private s3Service: S3Service;
-  private assetService: AssetService;
   private userRepository: UserRepository;
 
   constructor(
     userService: UserService,
-    businessService: BusinessService,
-    s3Service: S3Service,
-    assetService: AssetService,
     userRepository: UserRepository,
   ) {
     this.service = userService;
-    this.businessService = businessService;
-    this.s3Service = s3Service;
-    this.assetService = assetService;
     this.userRepository = userRepository;
   }
 
@@ -110,7 +98,7 @@ export class AuthController {
       if (existingUser) {
         return serveBadRequest(c, ERRORS.USER_EXISTS);
       }
-      await this.service.create(body.name, body.email, body.password, 'host', fullNumber);
+      await this.service.create(body.name, body.email, body.password, 'user', fullNumber);
     } catch (err) {
       return serveInternalServerError(c, err);
     }
@@ -420,63 +408,5 @@ export class AuthController {
     }
   };
 
-  public uploadProfileImage = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
-      const body: UploadProfileImageBody = await c.req.json();
-      const { imageBase64, fileName } = body;
-      if (!imageBase64 || !fileName) {
-        return serveBadRequest(c, ERRORS.INVALID_REQUEST);
-      }
 
-      // Convert base64 to buffer
-      const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
-      const buffer = Buffer.from(base64Data, 'base64');
-
-      // Create asset using AssetService
-      const { asset: assetId } = await this.assetService.createAsset(
-        user.id,
-        fileName.replace(/[^\w.-]/g, ''),
-        getContentType(imageBase64),
-        'profile_picture',
-        buffer.length,
-        0,
-        buffer,
-      );
-
-      // Get the full asset object to access the URL
-      const asset = await this.assetService.getAsset(assetId);
-      if (!asset || !asset.asset_url) {
-        return serveInternalServerError(c, new Error('Failed to get asset URL'));
-      }
-
-      // Update user profile image with the asset URL
-      await this.service.updateProfileImage(user.id, asset.asset_url);
-      return serveData(c, {
-        success: true,
-        message: 'Profile image updated successfully',
-        asset: asset,
-      });
-    } catch (error) {
-      logger.error(error);
-      return serveInternalServerError(c, error);
-    }
-  };
-
-  public getDashboard = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
-      const dashboard = await this.service.getDashboard(user.id);
-      return c.json(dashboard);
-    } catch (error) {
-      logger.error(error);
-      return serveInternalServerError(c, error);
-    }
-  };
 }

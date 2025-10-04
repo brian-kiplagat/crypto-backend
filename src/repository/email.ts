@@ -1,14 +1,13 @@
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 import { db } from '../lib/database.ts';
-import type { Email, NewEmail} from '../schema/schema.ts';
+import type { Email, NewEmail } from '../schema/schema.ts';
 import { emailsSchema } from '../schema/schema.ts';
 
 export class EmailRepository {
   public async createEmail(data: NewEmail) {
     return db.insert(emailsSchema).values(data).$returningId();
   }
-
 
   public async bulkAddEmails(data: NewEmail[]) {
     return db.insert(emailsSchema).values(data).$returningId();
@@ -19,7 +18,6 @@ export class EmailRepository {
       where: eq(emailsSchema.id, id),
     });
   }
-
 
   public async findEmailsByHostId(hostId: number) {
     return db.query.emailsSchema.findMany({
