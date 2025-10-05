@@ -238,3 +238,14 @@ export const formatMinutes = (mins: number) => {
 
   return `${hours} ${hourLabel} ${minutes} ${minuteLabel}`;
 };
+
+export type TradeStatus =
+  | 'OPENED'
+  | 'PAID'
+  | 'SUCCESSFUL'
+  | 'CANCELLED_BUYER'
+  | 'CANCELLED_SELLER'
+  | 'CANCELLED_SYSTEM'
+  | 'AWARDED_BUYER'
+  | 'AWARDED_SELLER'
+  | 'DISPUTED';

@@ -4,408 +4,412 @@ import { logger } from '../../lib/logger.js';
 import type { OfferService } from '../../service/offer.js';
 import { UserService } from '../../service/user.js';
 import {
-  type CreateOfferBody,
-  type FilterOffersBody,
-  type QuickEditOfferBody,
-  type ToggleAllOffersBody,
-  type ToggleOfferBody,
-  type UpdateOfferBody,
+    type CreateOfferBody,
+    type FilterOffersBody,
+    type QuickEditOfferBody,
+    type ToggleAllOffersBody,
+    type ToggleOfferBody,
+    type UpdateOfferBody,
 } from '../validator/offer.js';
 import { ERRORS, serveBadRequest, serveNotFound } from './resp/error.js';
 
 export class OfferController {
-  private offerService: OfferService;
-  private userService: UserService;
+    private offerService: OfferService;
+    private userService: UserService;
 
-  constructor(offerService: OfferService, userService: UserService) {
-    this.offerService = offerService;
-    this.userService = userService;
-  }
-
-  /**
-   * Retrieves user information from JWT payload
-   * @private
-   * @param {Context} c - The Hono context containing JWT payload
-   * @returns {Promise<User|null>} The user object if found, null otherwise
-   */
-  private getUser = async (c: Context) => {
-    const { email } = c.get('jwtPayload');
-    const user = await this.userService.findByEmail(email);
-    return user;
-  };
-
-  /**
-   * Creates a new offer
-   * @param {Context} c - The Hono context containing offer details
-   * @returns {Promise<Response>} Response containing created offer information
-   * @throws {Error} When offer creation fails
-   */
-  public createOffer = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
-
-      const body: CreateOfferBody = await c.req.json();
-      const { label, terms, instructions, currency, method, exchange_rate, margin } = body;
-
-      const offerId = await this.offerService.create({
-        user_id: user.id,
-        label,
-        terms,
-        instructions,
-        currency,
-        method,
-        exchange_rate: exchange_rate.toString(),
-        margin: margin.toString(),
-        status: 'active',
-        active: true,
-      });
-
-      return c.json({
-        success: true,
-        offer_id: offerId,
-        message: 'Offer created successfully',
-      });
-    } catch (error) {
-      logger.error('Failed to create offer:', error);
-      return serveBadRequest(c, 'Failed to create offer');
+    constructor(offerService: OfferService, userService: UserService) {
+        this.offerService = offerService;
+        this.userService = userService;
     }
-  };
 
-  /**
-   * Retrieves all offers for the authenticated user
-   * @param {Context} c - The Hono context
-   * @returns {Promise<Response>} Response containing list of offers
-   * @throws {Error} When fetching offers fails
-   */
-  public getMyOffers = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+    /**
+     * Retrieves user information from JWT payload
+     * @private
+     * @param {Context} c - The Hono context containing JWT payload
+     * @returns {Promise<User|null>} The user object if found, null otherwise
+     */
+    private getUser = async (c: Context) => {
+        const { email } = c.get('jwtPayload');
+        const user = await this.userService.findByEmail(email);
+        return user;
+    };
 
-      const [offers, count] = await Promise.all([
-        this.offerService.findByUserId(user.id),
-        this.offerService.getCount(user.id),
-      ]);
+    /**
+     * Creates a new offer
+     * @param {Context} c - The Hono context containing offer details
+     * @returns {Promise<Response>} Response containing created offer information
+     * @throws {Error} When offer creation fails
+     */
+    public createOffer = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-      return c.json({
-        success: true,
-        offers,
-        count,
-      });
-    } catch (error) {
-      logger.error('Failed to get offers:', error);
-      return serveBadRequest(c, 'Failed to get offers');
-    }
-  };
+            const body: CreateOfferBody = await c.req.json();
+            const { label, terms, instructions, currency, method, exchange_rate, margin } = body;
 
-  /**
-   * Retrieves all active offers
-   * @param {Context} c - The Hono context
-   * @returns {Promise<Response>} Response containing list of active offers
-   * @throws {Error} When fetching active offers fails
-   */
-  public getActiveOffers = async (c: Context) => {
-    try {
-      const [offers, count] = await Promise.all([
-        this.offerService.findActive(),
-        this.offerService.getActiveCount(),
-      ]);
+            const offerId = await this.offerService.create({
+                user_id: user.id,
+                label,
+                terms,
+                instructions,
+                currency,
+                method,
+                exchange_rate: exchange_rate.toString(),
+                margin: margin.toString(),
+                status: 'active',
+                active: true,
+            });
 
-      return c.json({
-        success: true,
-        offers,
-        count,
-      });
-    } catch (error) {
-      logger.error('Failed to get active offers:', error);
-      return serveBadRequest(c, 'Failed to get active offers');
-    }
-  };
+            return c.json({
+                success: true,
+                offer_id: offerId,
+                message: 'Offer created successfully',
+            });
+        } catch (error) {
+            logger.error('Failed to create offer:', error);
+            return serveBadRequest(c, 'Failed to create offer');
+        }
+    };
 
-  /**
-   * Filters offers based on criteria
-   * @param {Context} c - The Hono context containing filter criteria
-   * @returns {Promise<Response>} Response containing filtered offers
-   * @throws {Error} When filtering offers fails
-   */
-  public filterOffers = async (c: Context) => {
-    try {
-      const body: FilterOffersBody = await c.req.json();
-      const { currency, method, status, min_rate, max_rate, user_id, page, limit } = body;
+    /**
+     * Retrieves all offers for the authenticated user
+     * @param {Context} c - The Hono context
+     * @returns {Promise<Response>} Response containing list of offers
+     * @throws {Error} When fetching offers fails
+     */
+    public getMyOffers = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-      const criteria: FilterOffersBody = {
-        page,
-        limit,
-      };
+            const [offers, count] = await Promise.all([
+                this.offerService.findByUserId(user.id),
+                this.offerService.getCount(user.id),
+            ]);
 
-      if (currency) criteria.currency = currency;
-      if (method) criteria.method = method;
-      if (status) criteria.status = status;
-      if (min_rate) criteria.min_rate = min_rate;
-      if (max_rate) criteria.max_rate = max_rate;
-      if (user_id) criteria.user_id = user_id;
+            return c.json({
+                success: true,
+                offers,
+                count,
+            });
+        } catch (error) {
+            logger.error('Failed to get offers:', error);
+            return serveBadRequest(c, 'Failed to get offers');
+        }
+    };
 
-      const offers = await this.offerService.filter(criteria);
+    /**
+     * Retrieves all active offers
+     * @param {Context} c - The Hono context
+     * @returns {Promise<Response>} Response containing list of active offers
+     * @throws {Error} When fetching active offers fails
+     */
+    public getActiveOffers = async (c: Context) => {
+        try {
+            const [offers, count] = await Promise.all([
+                this.offerService.findActive(),
+                this.offerService.getActiveCount(),
+            ]);
 
-      return c.json({
-        success: true,
-        offers,
-        criteria,
-      });
-    } catch (error) {
-      logger.error('Failed to filter offers:', error);
-      return serveBadRequest(c, 'Failed to filter offers');
-    }
-  };
+            return c.json({
+                success: true,
+                offers,
+                count,
+            });
+        } catch (error) {
+            logger.error('Failed to get active offers:', error);
+            return serveBadRequest(c, 'Failed to get active offers');
+        }
+    };
 
-  /**
-   * Retrieves a specific offer by ID
-   * @param {Context} c - The Hono context containing offer ID
-   * @returns {Promise<Response>} Response containing offer details
-   * @throws {Error} When fetching offer fails
-   */
-  public getOffer = async (c: Context) => {
-    try {
-      const id = parseInt(c.req.param('id'));
-      const offer = await this.offerService.findById(id);
+    /**
+     * Filters offers based on criteria
+     * @param {Context} c - The Hono context containing filter criteria
+     * @returns {Promise<Response>} Response containing filtered offers
+     * @throws {Error} When filtering offers fails
+     */
+    public filterOffers = async (c: Context) => {
+        try {
+            const body: FilterOffersBody = await c.req.json();
+            const { currency, method, status, min_rate, max_rate, user_id, page, limit } = body;
 
-      if (!offer) {
-        return serveNotFound(c, 'Offer not found');
-      }
+            const criteria: FilterOffersBody = {
+                page,
+                limit,
+            };
 
-      return c.json({
-        success: true,
-        offer,
-      });
-    } catch (error) {
-      logger.error('Failed to get offer:', error);
-      return serveBadRequest(c, 'Failed to get offer');
-    }
-  };
+            if (currency) criteria.currency = currency;
+            if (method) criteria.method = method;
+            if (status) criteria.status = status;
+            if (min_rate) criteria.min_rate = min_rate;
+            if (max_rate) criteria.max_rate = max_rate;
+            if (user_id) criteria.user_id = user_id;
 
-  /**
-   * Updates an existing offer
-   * @param {Context} c - The Hono context containing offer details
-   * @returns {Promise<Response>} Response indicating update status
-   * @throws {Error} When offer update fails
-   */
-  public updateOffer = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+            const offers = await this.offerService.filter(criteria);
 
-      const id = parseInt(c.req.param('id'));
-      const body: UpdateOfferBody = await c.req.json();
+            return c.json({
+                success: true,
+                offers,
+                criteria,
+            });
+        } catch (error) {
+            logger.error('Failed to filter offers:', error);
+            return serveBadRequest(c, 'Failed to filter offers');
+        }
+    };
 
-      // Check if offer exists and belongs to user
-      const existingOffer = await this.offerService.findById(id);
-      if (!existingOffer) {
-        return serveNotFound(c, 'Offer not found');
-      }
+    /**
+     * Retrieves a specific offer by ID
+     * @param {Context} c - The Hono context containing offer ID
+     * @returns {Promise<Response>} Response containing offer details
+     * @throws {Error} When fetching offer fails
+     */
+    public getOffer = async (c: Context) => {
+        try {
+            const id = parseInt(c.req.param('id'));
+            const offer = await this.offerService.findById(id);
 
-      if (existingOffer.user_id !== user.id) {
-        return serveBadRequest(c, ERRORS.NOT_ALLOWED);
-      }
+            if (!offer) {
+                return serveNotFound(c, 'Offer not found');
+            }
 
-      // Convert numbers to strings for decimal fields
-      const updateData: any = { ...body };
-      if (body.exchange_rate !== undefined) {
-        updateData.exchange_rate = body.exchange_rate.toString();
-      }
-      if (body.margin !== undefined) {
-        updateData.margin = body.margin.toString();
-      }
+            return c.json({
+                success: true,
+                offer,
+            });
+        } catch (error) {
+            logger.error('Failed to get offer:', error);
+            return serveBadRequest(c, 'Failed to get offer');
+        }
+    };
 
-      await this.offerService.update(id, updateData);
+    /**
+     * Updates an existing offer
+     * @param {Context} c - The Hono context containing offer details
+     * @returns {Promise<Response>} Response indicating update status
+     * @throws {Error} When offer update fails
+     */
+    public updateOffer = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-      return c.json({
-        success: true,
-        message: 'Offer updated successfully',
-      });
-    } catch (error) {
-      logger.error('Failed to update offer:', error);
-      return serveBadRequest(c, 'Failed to update offer');
-    }
-  };
+            const id = parseInt(c.req.param('id'));
+            const body: UpdateOfferBody = await c.req.json();
 
-  /**
-   * Quick edit for offer (partial update)
-   * @param {Context} c - The Hono context containing offer details
-   * @returns {Promise<Response>} Response indicating update status
-   * @throws {Error} When offer quick edit fails
-   */
-  public quickEdit = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+            // Check if offer exists and belongs to user
+            const existingOffer = await this.offerService.findById(id);
+            if (!existingOffer) {
+                return serveNotFound(c, 'Offer not found');
+            }
 
-      const id = parseInt(c.req.param('id'));
-      const body: QuickEditOfferBody = await c.req.json();
+            if (existingOffer.user_id !== user.id) {
+                return serveBadRequest(c, ERRORS.NOT_ALLOWED);
+            }
 
-      // Check if offer exists and belongs to user
-      const existingOffer = await this.offerService.findById(id);
-      if (!existingOffer) {
-        return serveNotFound(c, 'Offer not found');
-      }
+            // Convert numbers to strings for decimal fields
+            const updateData: Partial<UpdateOfferBody> = { ...body };
+            if (body.exchange_rate !== undefined) {
+                updateData.exchange_rate = Number(body.exchange_rate);
+            }
+            if (body.margin !== undefined) {
+                updateData.margin = Number(body.margin);
+            }
 
-      if (existingOffer.user_id !== user.id) {
-        return serveBadRequest(c, ERRORS.NOT_ALLOWED);
-      }
+            await this.offerService.update(id, {
+                ...updateData,
+                exchange_rate: updateData.exchange_rate?.toString(),
+                margin: updateData.margin?.toString(),
+            });
 
-      // Convert numbers to strings for decimal fields
-      const updateData: any = { ...body };
-      if (body.exchange_rate !== undefined) {
-        updateData.exchange_rate = body.exchange_rate.toString();
-      }
-      if (body.margin !== undefined) {
-        updateData.margin = body.margin.toString();
-      }
+            return c.json({
+                success: true,
+                message: 'Offer updated successfully',
+            });
+        } catch (error) {
+            logger.error('Failed to update offer:', error);
+            return serveBadRequest(c, 'Failed to update offer');
+        }
+    };
 
-      await this.offerService.update(id, updateData);
+    /**
+     * Quick edit for offer (partial update)
+     * @param {Context} c - The Hono context containing offer details
+     * @returns {Promise<Response>} Response indicating update status
+     * @throws {Error} When offer quick edit fails
+     */
+    public quickEdit = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-      return c.json({
-        success: true,
-        message: 'Offer updated successfully',
-      });
-    } catch (error) {
-      logger.error('Failed to quick edit offer:', error);
-      return serveBadRequest(c, 'Failed to quick edit offer');
-    }
-  };
+            const id = parseInt(c.req.param('id'));
+            const body: QuickEditOfferBody = await c.req.json();
 
-  /**
-   * Toggles offer status
-   * @param {Context} c - The Hono context containing offer ID and status
-   * @returns {Promise<Response>} Response indicating toggle status
-   * @throws {Error} When offer toggle fails
-   */
-  public toggleOffer = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+            // Check if offer exists and belongs to user
+            const existingOffer = await this.offerService.findById(id);
+            if (!existingOffer) {
+                return serveNotFound(c, 'Offer not found');
+            }
 
-      const id = parseInt(c.req.param('id'));
-      const body: ToggleOfferBody = await c.req.json();
+            if (existingOffer.user_id !== user.id) {
+                return serveBadRequest(c, ERRORS.NOT_ALLOWED);
+            }
 
-      // Check if offer exists and belongs to user
-      const existingOffer = await this.offerService.findById(id);
-      if (!existingOffer) {
-        return serveNotFound(c, 'Offer not found');
-      }
+            // Convert numbers to strings for decimal fields
+            const updateData: any = { ...body };
+            if (body.exchange_rate !== undefined) {
+                updateData.exchange_rate = body.exchange_rate.toString();
+            }
+            if (body.margin !== undefined) {
+                updateData.margin = body.margin.toString();
+            }
 
-      if (existingOffer.user_id !== user.id) {
-        return serveBadRequest(c, ERRORS.NOT_ALLOWED);
-      }
+            await this.offerService.update(id, updateData);
 
-      await this.offerService.toggleStatus(id, body.status);
+            return c.json({
+                success: true,
+                message: 'Offer updated successfully',
+            });
+        } catch (error) {
+            logger.error('Failed to quick edit offer:', error);
+            return serveBadRequest(c, 'Failed to quick edit offer');
+        }
+    };
 
-      return c.json({
-        success: true,
-        message: `Offer status changed to ${body.status}`,
-      });
-    } catch (error) {
-      logger.error('Failed to toggle offer:', error);
-      return serveBadRequest(c, 'Failed to toggle offer');
-    }
-  };
+    /**
+     * Toggles offer status
+     * @param {Context} c - The Hono context containing offer ID and status
+     * @returns {Promise<Response>} Response indicating toggle status
+     * @throws {Error} When offer toggle fails
+     */
+    public toggleOffer = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-  /**
-   * Toggles all offers for the authenticated user
-   * @param {Context} c - The Hono context containing status
-   * @returns {Promise<Response>} Response indicating toggle status
-   * @throws {Error} When toggling all offers fails
-   */
-  public toggleAllOffers = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+            const id = parseInt(c.req.param('id'));
+            const body: ToggleOfferBody = await c.req.json();
 
-      const body: ToggleAllOffersBody = await c.req.json();
+            // Check if offer exists and belongs to user
+            const existingOffer = await this.offerService.findById(id);
+            if (!existingOffer) {
+                return serveNotFound(c, 'Offer not found');
+            }
 
-      await this.offerService.toggleAllForUser(user.id, body.status);
+            if (existingOffer.user_id !== user.id) {
+                return serveBadRequest(c, ERRORS.NOT_ALLOWED);
+            }
 
-      return c.json({
-        success: true,
-        message: `All offers status changed to ${body.status}`,
-      });
-    } catch (error) {
-      logger.error('Failed to toggle all offers:', error);
-      return serveBadRequest(c, 'Failed to toggle all offers');
-    }
-  };
+            await this.offerService.toggleStatus(id, body.status);
 
-  /**
-   * Deletes an offer
-   * @param {Context} c - The Hono context containing offer ID
-   * @returns {Promise<Response>} Response indicating deletion status
-   * @throws {Error} When offer deletion fails
-   */
-  public deleteOffer = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+            return c.json({
+                success: true,
+                message: `Offer status changed to ${body.status}`,
+            });
+        } catch (error) {
+            logger.error('Failed to toggle offer:', error);
+            return serveBadRequest(c, 'Failed to toggle offer');
+        }
+    };
 
-      const id = parseInt(c.req.param('id'));
+    /**
+     * Toggles all offers for the authenticated user
+     * @param {Context} c - The Hono context containing status
+     * @returns {Promise<Response>} Response indicating toggle status
+     * @throws {Error} When toggling all offers fails
+     */
+    public toggleAllOffers = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-      // Check if offer exists and belongs to user
-      const existingOffer = await this.offerService.findById(id);
-      if (!existingOffer) {
-        return serveNotFound(c, 'Offer not found');
-      }
+            const body: ToggleAllOffersBody = await c.req.json();
 
-      if (existingOffer.user_id !== user.id) {
-        return serveBadRequest(c, ERRORS.NOT_ALLOWED);
-      }
+            await this.offerService.toggleAllForUser(user.id, body.status);
 
-      await this.offerService.delete(id);
+            return c.json({
+                success: true,
+                message: `All offers status changed to ${body.status}`,
+            });
+        } catch (error) {
+            logger.error('Failed to toggle all offers:', error);
+            return serveBadRequest(c, 'Failed to toggle all offers');
+        }
+    };
 
-      return c.json({
-        success: true,
-        message: 'Offer deleted successfully',
-      });
-    } catch (error) {
-      logger.error('Failed to delete offer:', error);
-      return serveBadRequest(c, 'Failed to delete offer');
-    }
-  };
+    /**
+     * Deletes an offer
+     * @param {Context} c - The Hono context containing offer ID
+     * @returns {Promise<Response>} Response indicating deletion status
+     * @throws {Error} When offer deletion fails
+     */
+    public deleteOffer = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
 
-  /**
-   * Deletes all offers for the authenticated user
-   * @param {Context} c - The Hono context
-   * @returns {Promise<Response>} Response indicating deletion status
-   * @throws {Error} When offer deletion fails
-   */
-  public deleteAllOffers = async (c: Context) => {
-    try {
-      const user = await this.getUser(c);
-      if (!user) {
-        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
-      }
+            const id = parseInt(c.req.param('id'));
 
-      await this.offerService.deleteByUserId(user.id);
+            // Check if offer exists and belongs to user
+            const existingOffer = await this.offerService.findById(id);
+            if (!existingOffer) {
+                return serveNotFound(c, 'Offer not found');
+            }
 
-      return c.json({
-        success: true,
-        message: 'All offers deleted successfully',
-      });
-    } catch (error) {
-      logger.error('Failed to delete all offers:', error);
-      return serveBadRequest(c, 'Failed to delete all offers');
-    }
-  };
+            if (existingOffer.user_id !== user.id) {
+                return serveBadRequest(c, ERRORS.NOT_ALLOWED);
+            }
+
+            await this.offerService.delete(id);
+
+            return c.json({
+                success: true,
+                message: 'Offer deleted successfully',
+            });
+        } catch (error) {
+            logger.error('Failed to delete offer:', error);
+            return serveBadRequest(c, 'Failed to delete offer');
+        }
+    };
+
+    /**
+     * Deletes all offers for the authenticated user
+     * @param {Context} c - The Hono context
+     * @returns {Promise<Response>} Response indicating deletion status
+     * @throws {Error} When offer deletion fails
+     */
+    public deleteAllOffers = async (c: Context) => {
+        try {
+            const user = await this.getUser(c);
+            if (!user) {
+                return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+            }
+
+            await this.offerService.deleteByUserId(user.id);
+
+            return c.json({
+                success: true,
+                message: 'All offers deleted successfully',
+            });
+        } catch (error) {
+            logger.error('Failed to delete all offers:', error);
+            return serveBadRequest(c, 'Failed to delete all offers');
+        }
+    };
 }

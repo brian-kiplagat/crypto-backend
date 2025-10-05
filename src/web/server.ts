@@ -10,6 +10,7 @@ import { connection } from '../lib/queue.js';
 import { EmailRepository } from '../repository/email.ts';
 import { NotificationRepository } from '../repository/notification.ts';
 import { OfferRepository } from '../repository/offer.ts';
+import { TradeRepository } from '../repository/trade.ts';
 import { UserRepository } from '../repository/user.js';
 import { WalletRepository } from '../repository/wallet.ts';
 import { BitgoService } from '../service/bitgo.ts';
@@ -17,6 +18,7 @@ import { EmailService } from '../service/email.ts';
 import { GoogleService } from '../service/google.js';
 import { NotificationService } from '../service/notification.ts';
 import { OfferService } from '../service/offer.ts';
+import { TradeService } from '../service/trade.ts';
 import { UserService } from '../service/user.js';
 import { WalletService } from '../service/wallet.ts';
 import { Tasker } from '../task/tasker.js';
@@ -26,6 +28,7 @@ import { GoogleController } from './controller/google.js';
 import { NotificationController } from './controller/notification.ts';
 import { OfferController } from './controller/offer.ts';
 import { ERRORS, serveInternalServerError, serveNotFound } from './controller/resp/error.js';
+import { TradeController } from './controller/trade.ts';
 import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
 import {
   createNotificationValidator,
@@ -39,6 +42,17 @@ import {
   toggleOfferValidator,
   updateOfferValidator,
 } from './validator/offer.ts';
+import {
+  cancelTradeValidator,
+  createTradeValidator,
+  filterTradesValidator,
+  markPaidValidator,
+  openDisputeValidator,
+  releaseCryptoValidator,
+  reopenTradeValidator,
+  resolveDisputeValidator,
+  updateTradeValidator,
+} from './validator/trade.ts';
 import {
   emailVerificationValidator,
   inAppResetPasswordValidator,
@@ -87,6 +101,7 @@ export class Server {
     const emailRepo = new EmailRepository();
     const notificationRepo = new NotificationRepository();
     const offerRepo = new OfferRepository();
+    const tradeRepo = new TradeRepository();
     const walletRepo = new WalletRepository();
     // Setup services
     const notificationService = new NotificationService(notificationRepo);
@@ -94,6 +109,7 @@ export class Server {
 
     const userService = new UserService(userRepo);
     const emailService = new EmailService(emailRepo);
+    const tradeService = new TradeService(tradeRepo, offerService, userService);
     const walletService = new WalletService(walletRepo);
     const bitgoService = new BitgoService(userService, walletService);
     // Setup workers
@@ -110,12 +126,14 @@ export class Server {
 
     const notificationController = new NotificationController(notificationService, userService);
     const offerController = new OfferController(offerService, userService);
+    const tradeController = new TradeController(tradeService, userService, offerService);
     // Register routes
     this.registerUserRoutes(api, authController, googleController);
 
     this.registerEmailRoutes(api, emailController);
     this.registerNotificationRoutes(api, notificationController);
     this.registerOfferRoutes(api, offerController);
+    this.registerTradeRoutes(api, tradeController);
   }
 
   private registerUserRoutes(api: Hono, authCtrl: AuthController, googleCtrl: GoogleController) {
@@ -206,6 +224,32 @@ export class Server {
     offer.delete('/all', offerCtrl.deleteAllOffers);
 
     api.route('/offer', offer);
+  }
+
+  private registerTradeRoutes(api: Hono, tradeCtrl: TradeController) {
+    const trade = new Hono();
+    const authCheck = jwt({ secret: env.SECRET_KEY });
+
+    // Apply auth middleware for all trade routes
+    trade.use(authCheck);
+
+    // Trade routes
+    trade.post('/', createTradeValidator, tradeCtrl.createTrade);
+    trade.get('/my', tradeCtrl.getMyTrades);
+    trade.post('/filter', filterTradesValidator, tradeCtrl.filterTrades);
+    trade.get('/expired', tradeCtrl.getExpiredTrades);
+    trade.get('/disputed', tradeCtrl.getDisputedTrades);
+    trade.get('/:id', tradeCtrl.getTrade);
+    trade.post('/:id/reopen', reopenTradeValidator, tradeCtrl.reopenTrade);
+    trade.post('/:id/mark-paid', markPaidValidator, tradeCtrl.markPaid);
+    trade.post('/:id/cancel', cancelTradeValidator, tradeCtrl.cancelTrade);
+    trade.post('/:id/dispute', openDisputeValidator, tradeCtrl.openDispute);
+    trade.post('/:id/resolve-dispute', resolveDisputeValidator, tradeCtrl.resolveDispute);
+    trade.post('/:id/release', releaseCryptoValidator, tradeCtrl.releaseCrypto);
+    trade.put('/:id', updateTradeValidator, tradeCtrl.updateTrade);
+    trade.delete('/:id', tradeCtrl.deleteTrade);
+
+    api.route('/trade', trade);
   }
 
   private registerWorker(userService: UserService, emailService: EmailService) {
