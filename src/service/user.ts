@@ -1,9 +1,10 @@
 import { encrypt } from '../lib/encryption.ts';
 import env from '../lib/env.ts';
 import { logger } from '../lib/logger.ts';
-import type { UserRepository } from '../repository/user.ts';
+import { UserRepository } from '../repository/user.ts';
 import type { User } from '../schema/schema.ts';
 import { sendTransactionalEmail } from '../task/email-processor.ts';
+import { capitalizeFirst, shuffleString } from '../util/string.js';
 
 /**
  * Service class for managing users, including creation, authentication, and profile management
@@ -43,6 +44,9 @@ export class UserService {
     try {
       const hashedPassword = encrypt(password);
 
+      // Generate a unique username if not provided
+      const username = additionalFields.custom_id || (await this.generateUserName());
+
       // Create user with all fields
       const user = await this.repo.create({
         name,
@@ -51,6 +55,7 @@ export class UserService {
         role,
         phone,
         auth_provider: 'local',
+        custom_id: username,
         ...additionalFields,
       });
 
@@ -146,5 +151,52 @@ export class UserService {
       logger.error('Error sending welcome email:', error);
       throw error;
     }
+  }
+
+  /**
+   * Generates a unique username using the Laravel pattern
+   * @returns {Promise<string>} Generated username
+   */
+  public async generateUserName(): Promise<string> {
+    const words = await this.repo.getTwoRandomWords();
+
+    if (words.length < 2) {
+      throw new Error('Not enough words in database for username generation');
+    }
+
+    const word1 = words[0].word.toLowerCase().trim();
+    const word2 = words[1].word.toLowerCase().trim();
+
+    // Process words similar to Laravel implementation
+    const part1 = word1.substring(0, 8); // Max 8 chars
+    const part2 = word2.substring(0, 5); // Max 5 chars
+
+    // Generate 3-digit random number
+    const part3 = Math.floor(Math.random() * 900) + 100; // 100-999
+
+    // Capitalize and shuffle
+    const capitalizedPart1 = capitalizeFirst(part1);
+    const shuffledPart2 = shuffleString(part2);
+    const capitalizedPart2 = capitalizeFirst(shuffledPart2);
+
+    const username = capitalizedPart1 + capitalizedPart2 + part3;
+
+    // Check if username exists and regenerate if needed
+    const exists = await this.checkUsernameExists(username);
+    if (exists) {
+      return this.generateUserName(); // Recursive call to generate new username
+    }
+
+    return username;
+  }
+
+  /**
+   * Checks if a username already exists
+   * @param {string} username - Username to check
+   * @returns {Promise<boolean>} True if username exists
+   */
+  public async checkUsernameExists(username: string): Promise<boolean> {
+    const user = await this.repo.findByCustomId(username);
+    return user !== undefined;
   }
 }

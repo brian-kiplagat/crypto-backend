@@ -69,6 +69,7 @@ export class GoogleService {
 
       if (!user) {
         // Create new user with explicit auth_provider
+        const username = await this.userService.generateUserName();
         await this.userService.create(
           userInfo.name || 'Google User',
           userInfo.email,
@@ -80,6 +81,7 @@ export class GoogleService {
             google_access_token: tokens.access_token,
             auth_provider: 'google',
             is_verified: true,
+            custom_id: username,
             profile_picture: userInfo.picture || null,
           },
         );

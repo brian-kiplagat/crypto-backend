@@ -1,7 +1,7 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 import { db } from '../lib/database.ts';
-import { type NewUser, type User, userSchema } from '../schema/schema.js';
+import { type NewUser, type User, userSchema, wordsSchema } from '../schema/schema.js';
 
 export class UserRepository {
   public async create(user: NewUser) {
@@ -43,5 +43,21 @@ export class UserRepository {
 
   public async setBalance(userId: number, newBalance: string) {
     return db.update(userSchema).set({ balance: newBalance }).where(eq(userSchema.id, userId));
+  }
+
+  public async getTwoRandomWords() {
+    const words = await db
+      .select()
+      .from(wordsSchema)
+      .orderBy(sql`RAND()`)
+      .limit(2);
+
+    return words;
+  }
+
+  public async findByCustomId(customId: string) {
+    return db.query.userSchema.findFirst({
+      where: eq(userSchema.custom_id, customId),
+    });
   }
 }

@@ -249,3 +249,20 @@ export type TradeStatus =
   | 'AWARDED_BUYER'
   | 'AWARDED_SELLER'
   | 'DISPUTED';
+
+export const generateUserName = (): string => {
+  return randomUUID();
+};
+
+// Helper function to shuffle a string (equivalent to PHP's str_shuffle)
+export const shuffleString = (str: string): string => {
+  return str
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
+};
+
+// Helper function to capitalize first letter (equivalent to PHP's ucfirst)
+export const capitalizeFirst = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};

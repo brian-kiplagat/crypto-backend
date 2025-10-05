@@ -278,6 +278,11 @@ export const offerCountryRestrictionsSchema = mysqlTable('offer_country_restrict
   created_at: timestamp('created_at').defaultNow(),
 });
 
+export const wordsSchema = mysqlTable('words', {
+  id: serial('id').primaryKey(),
+  word: varchar('word', { length: 255 }).notNull(),
+});
+
 export type Email = typeof emailsSchema.$inferSelect;
 export type Notification = typeof notificationsSchema.$inferSelect;
 export type NewNotification = typeof notificationsSchema.$inferInsert;
@@ -304,6 +309,8 @@ export type Feedback = typeof feedbackSchema.$inferSelect;
 export type NewFeedback = typeof feedbackSchema.$inferInsert;
 export type OfferCountryRestriction = typeof offerCountryRestrictionsSchema.$inferSelect;
 export type NewOfferCountryRestriction = typeof offerCountryRestrictionsSchema.$inferInsert;
+export type Word = typeof wordsSchema.$inferSelect;
+export type NewWord = typeof wordsSchema.$inferInsert;
 
 // Define relations
 
@@ -400,3 +407,10 @@ export const offerCountryRestrictionsRelations = relations(
     }),
   }),
 );
+
+export const wordsRelations = relations(wordsSchema, ({ one }) => ({
+  word: one(wordsSchema, {
+    fields: [wordsSchema.id],
+    references: [wordsSchema.id],
+  }),
+}));
