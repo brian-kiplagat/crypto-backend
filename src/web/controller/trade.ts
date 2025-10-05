@@ -64,17 +64,17 @@ export class TradeController {
       // Get the offer
       const offer = await this.offerService.findById(offer_id);
       if (!offer) {
-        throw new Error('Offer not found');
+        throw new Error('Offer not found. Check if you have the correct link');
       }
 
       // Validate offer is active
       if (offer.status !== 'active' || !offer.active) {
-        throw new Error('Offer is not active');
+        throw new Error('Offer is not active at the moment');
       }
 
       // Validate buyer is not the seller
       if (offer.user_id === user.id) {
-        throw new Error('Cannot buy from your own offer');
+        throw new Error('You cannot make a trade from your own offer');
       }
 
       // Policy checks (user health and offer rules)
@@ -82,7 +82,7 @@ export class TradeController {
         return serveBadRequest(c, `Your account is ${user.health}.`);
       }
       if (offer.deauth) {
-        return serveBadRequest(c, 'This offer is de-authorized by support');
+        return serveBadRequest(c, 'This offer is de-authorized by our support');
       }
       if (offer.id_verification && !user.is_verified) {
         return serveBadRequest(c, 'You must verify your ID to trade on this offer');
@@ -93,21 +93,11 @@ export class TradeController {
 
       // Trades count rules
       const myTrades = await this.tradeService.getCount(user.id);
-      if (offer.min_trades && myTrades < offer.min_trades) {
+      if (offer.new_trader_limit && myTrades < (offer.minimum_trades ?? 0)) {
         return serveBadRequest(
           c,
-          `You need at least ${offer.min_trades} previous trades to use this offer`,
-        );
-      }
-      if (
-        offer.new_trader_limit &&
-        offer.limit_block &&
-        offer.limit_block > 0 &&
-        myTrades < offer.limit_block
-      ) {
-        return serveBadRequest(
-          c,
-          `This offer is limited to traders with more than ${offer.limit_block} trades`,
+          `This offer requires at least ${offer.minimum_trades} completed trades. You currently have ${myTrades}.`
+
         );
       }
 
