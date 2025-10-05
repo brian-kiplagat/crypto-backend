@@ -1,0 +1,1 @@
+ALTER TABLE `offers` RENAME COLUMN `vpn` TO `vpn_blocked`;

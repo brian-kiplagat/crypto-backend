@@ -135,7 +135,7 @@ export const offersSchema = mysqlTable('offers', {
   min_trades: int('min_trades').default(0),
   new_trader_limit: boolean('new_trader_limit').default(false),
   limit_block: int('limit_block').default(0),
-  vpn: boolean('vpn').default(false),
+  vpn_blocked: boolean('vpn_blocked').default(false),
   limit_countries: mysqlEnum('limit_countries', ['none', 'blocked', 'allowed']).default('none'),
   blocked_countries: json('blocked_countries'),
   allowed_countries: json('allowed_countries'),

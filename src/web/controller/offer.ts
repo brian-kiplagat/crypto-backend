@@ -48,7 +48,7 @@ export class OfferController {
       }
 
       const body: CreateOfferBody = await c.req.json();
-      const { label, terms, instructions, currency, method_id, margin } = body;
+      const { margin } = body;
 
       const offerId = await this.offerService.create({
         ...body,

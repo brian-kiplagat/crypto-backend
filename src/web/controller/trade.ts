@@ -112,7 +112,7 @@ export class TradeController {
       }
 
       // VPN / Tor header-based stub (set by upstream)
-      if (offer.vpn && c.req.header('x-vpn') === 'true') {
+      if (offer.vpn_blocked && c.req.header('x-vpn') === 'true') {
         return serveBadRequest(c, 'This offer is not available for VPN/Tor users');
       }
       // Country restrictions via header stub `x-country-iso`
