@@ -31,4 +31,17 @@ export class UserRepository {
   public async delete(id: number) {
     return db.delete(userSchema).where(eq(userSchema.id, id));
   }
+
+  // Balance operations
+  public async getBalance(userId: number): Promise<string> {
+    const user = await db.query.userSchema.findFirst({
+      where: eq(userSchema.id, userId),
+      columns: { balance: true },
+    });
+    return user?.balance || '0.00000000';
+  }
+
+  public async setBalance(userId: number, newBalance: string) {
+    return db.update(userSchema).set({ balance: newBalance }).where(eq(userSchema.id, userId));
+  }
 }

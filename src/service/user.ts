@@ -79,6 +79,15 @@ export class UserService {
     return this.repo.find(id);
   }
 
+  // Balance wrappers (DB still handled in repository)
+  public async getBalance(userId: number): Promise<string> {
+    return this.repo.getBalance(userId);
+  }
+
+  public async setBalance(userId: number, newBalance: string) {
+    return this.repo.setBalance(userId, newBalance);
+  }
+
   /**
    * Updates a user's information
    * @param {number} id - ID of the user to update

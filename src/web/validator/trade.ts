@@ -16,6 +16,15 @@ const reopenTradeSchema = z.object({
   trade_id: z.number().int().positive('Trade ID must be a positive integer'),
 });
 
+const getTradePriceSchema = z.object({
+  currency: z.string().min(3, 'Currency must be at least 3 characters'),
+  fiat_amount: z.number().positive('Fiat amount must be a positive number'),
+});
+
+const getTradePriceValidator = validator('json', (value, c) => {
+  return validateSchema(c, getTradePriceSchema, value);
+});
+
 const reopenTradeValidator = validator('json', (value, c) => {
   return validateSchema(c, reopenTradeSchema, value);
 });
@@ -130,6 +139,7 @@ const updateTradeValidator = validator('json', (value, c) => {
 
 type CreateTradeBody = z.infer<typeof createTradeSchema>;
 type ReopenTradeBody = z.infer<typeof reopenTradeSchema>;
+type GetTradePriceBody = z.infer<typeof getTradePriceSchema>;
 type MarkPaidBody = z.infer<typeof markPaidSchema>;
 type CancelTradeBody = z.infer<typeof cancelTradeSchema>;
 type OpenDisputeBody = z.infer<typeof openDisputeSchema>;
@@ -145,6 +155,8 @@ export {
   createTradeValidator,
   type FilterTradesBody,
   filterTradesValidator,
+  type GetTradePriceBody,
+  getTradePriceValidator,
   type MarkPaidBody,
   markPaidValidator,
   type OpenDisputeBody,

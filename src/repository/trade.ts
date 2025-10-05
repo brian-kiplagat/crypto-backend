@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, like, lte, or, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, lte, or, sql } from 'drizzle-orm';
 
 import { db } from '../lib/database.js';
 import type { NewTrade } from '../schema/schema.js';

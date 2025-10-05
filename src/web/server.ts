@@ -18,6 +18,7 @@ import { EmailService } from '../service/email.ts';
 import { GoogleService } from '../service/google.js';
 import { NotificationService } from '../service/notification.ts';
 import { OfferService } from '../service/offer.ts';
+import { PriceService } from '../service/price.ts';
 import { TradeService } from '../service/trade.ts';
 import { UserService } from '../service/user.js';
 import { WalletService } from '../service/wallet.ts';
@@ -46,12 +47,12 @@ import {
   cancelTradeValidator,
   createTradeValidator,
   filterTradesValidator,
+  getTradePriceValidator,
   markPaidValidator,
   openDisputeValidator,
   releaseCryptoValidator,
   reopenTradeValidator,
   resolveDisputeValidator,
-  updateTradeValidator,
 } from './validator/trade.ts';
 import {
   emailVerificationValidator,
@@ -110,6 +111,7 @@ export class Server {
     const userService = new UserService(userRepo);
     const emailService = new EmailService(emailRepo);
     const tradeService = new TradeService(tradeRepo, offerService, userService);
+    const priceService = new PriceService();
     const walletService = new WalletService(walletRepo);
     const bitgoService = new BitgoService(userService, walletService);
     // Setup workers
@@ -126,7 +128,12 @@ export class Server {
 
     const notificationController = new NotificationController(notificationService, userService);
     const offerController = new OfferController(offerService, userService);
-    const tradeController = new TradeController(tradeService, userService, offerService);
+    const tradeController = new TradeController(
+      tradeService,
+      userService,
+      offerService,
+      priceService,
+    );
     // Register routes
     this.registerUserRoutes(api, authController, googleController);
 
@@ -230,6 +237,7 @@ export class Server {
     const trade = new Hono();
     const authCheck = jwt({ secret: env.SECRET_KEY });
 
+    trade.post('/price', getTradePriceValidator, tradeCtrl.getTradePrice);
     // Apply auth middleware for all trade routes
     trade.use(authCheck);
 
@@ -246,7 +254,6 @@ export class Server {
     trade.post('/:id/dispute', openDisputeValidator, tradeCtrl.openDispute);
     trade.post('/:id/resolve-dispute', resolveDisputeValidator, tradeCtrl.resolveDispute);
     trade.post('/:id/release', releaseCryptoValidator, tradeCtrl.releaseCrypto);
-    trade.put('/:id', updateTradeValidator, tradeCtrl.updateTrade);
     trade.delete('/:id', tradeCtrl.deleteTrade);
 
     api.route('/trade', trade);
