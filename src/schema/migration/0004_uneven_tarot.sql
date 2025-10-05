@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `balance` decimal(20,8) DEFAULT '0.00000000';

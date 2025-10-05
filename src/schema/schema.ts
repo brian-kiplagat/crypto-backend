@@ -31,6 +31,7 @@ export const userSchema = mysqlTable('user', {
   is_banned: boolean('is_banned').default(false),
   is_deleted: boolean('is_deleted').default(false),
   google_id: varchar('google_id', { length: 255 }),
+  balance: decimal('balance', { precision: 20, scale: 8 }).default('0.00000000'),
   google_access_token: varchar('google_access_token', { length: 255 }),
   auth_provider: mysqlEnum('auth_provider', ['local', 'google']).default('local'),
 });
