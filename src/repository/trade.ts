@@ -18,6 +18,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -30,6 +31,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -51,6 +53,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -63,6 +66,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -85,6 +89,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -97,6 +102,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -119,6 +125,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -131,6 +138,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -153,6 +161,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -165,6 +174,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -199,6 +209,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -221,6 +232,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -233,6 +245,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -255,6 +268,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -267,6 +281,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -289,6 +304,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -301,6 +317,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -370,6 +387,7 @@ export class TradeRepository {
         buyer: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
@@ -382,6 +400,7 @@ export class TradeRepository {
         seller: {
           columns: {
             name: true,
+            username: true,
             createdAt: true,
             updatedAt: true,
             role: true,
