@@ -1,0 +1,1 @@
+ALTER TABLE `offers` ADD `type` enum('buy','sell') NOT NULL;

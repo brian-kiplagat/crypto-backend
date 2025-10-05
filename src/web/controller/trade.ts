@@ -190,7 +190,6 @@ export class TradeController {
       const tradeId = await this.tradeService.create(tradeData);
 
       return c.json({
-        success: true,
         trade_id: tradeId,
         message: 'Trade created successfully',
       });
@@ -207,7 +206,6 @@ export class TradeController {
       const currentBtcPrice = await this.priceService.getBtcPrice(currency);
       const pricing = this.priceService.calculatePricing(0, currentBtcPrice, fiat_amount);
       return c.json({
-        success: true,
         pricing,
         currentBtcPrice,
       });
@@ -313,10 +311,7 @@ export class TradeController {
         return serveBadRequest(c, ERRORS.NOT_ALLOWED);
       }
 
-      return c.json({
-        success: true,
-        trade,
-      });
+      return c.json(trade);
     } catch (error) {
       logger.error('Failed to get trade:', error);
       return serveBadRequest(c, 'Failed to get trade');
@@ -342,7 +337,6 @@ export class TradeController {
       ]);
 
       return c.json({
-        success: true,
         trades,
         count,
       });
@@ -364,7 +358,6 @@ export class TradeController {
       const trades = await this.tradeService.filter(body);
 
       return c.json({
-        success: true,
         trades,
         criteria: body,
       });
@@ -406,7 +399,6 @@ export class TradeController {
       await this.tradeService.markPaid(id);
 
       return c.json({
-        success: true,
         message: 'Trade marked as paid',
       });
     } catch (error) {
@@ -461,7 +453,6 @@ export class TradeController {
       await this.tradeService.cancelTrade(id, cancelledBy, body.reason);
 
       return c.json({
-        success: true,
         message: 'Trade cancelled successfully',
         escrow_returned: escrowAmount.toFixed(8),
       });
@@ -508,7 +499,6 @@ export class TradeController {
       await this.tradeService.openDispute(id, startedBy, body.reason, body.explanation);
 
       return c.json({
-        success: true,
         message: 'Dispute opened successfully',
       });
     } catch (error) {
@@ -546,7 +536,6 @@ export class TradeController {
       await this.tradeService.resolveDispute(id, body.awarded_to, body.mod_notes);
 
       return c.json({
-        success: true,
         message: `Dispute resolved in favor of ${body.awarded_to}`,
       });
     } catch (error) {
@@ -610,7 +599,6 @@ export class TradeController {
       await this.tradeService.releaseCrypto(id);
 
       return c.json({
-        success: true,
         message: 'Crypto released successfully',
         buyer_received: buyerAmount.toFixed(8),
         seller_returned: sellerAmount.toFixed(8),
@@ -645,7 +633,6 @@ export class TradeController {
       const trades = await this.tradeService.findExpired();
 
       return c.json({
-        success: true,
         trades,
         count: trades.length,
       });
@@ -679,7 +666,6 @@ export class TradeController {
       ]);
 
       return c.json({
-        success: true,
         trades,
         count,
       });
@@ -712,7 +698,6 @@ export class TradeController {
       await this.tradeService.delete(id);
 
       return c.json({
-        success: true,
         message: 'Trade deleted successfully',
       });
     } catch (error) {

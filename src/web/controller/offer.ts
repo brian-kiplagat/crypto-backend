@@ -59,7 +59,6 @@ export class OfferController {
       });
 
       return c.json({
-        success: true,
         offer_id: offerId,
         message: 'Offer created successfully',
       });
@@ -88,7 +87,6 @@ export class OfferController {
       ]);
 
       return c.json({
-        success: true,
         offers,
         count,
       });
@@ -112,7 +110,6 @@ export class OfferController {
       ]);
 
       return c.json({
-        success: true,
         offers,
         count,
       });
@@ -148,7 +145,6 @@ export class OfferController {
       const offers = await this.offerService.filter(criteria);
 
       return c.json({
-        success: true,
         offers,
         criteria,
       });
@@ -173,10 +169,7 @@ export class OfferController {
         return serveNotFound(c, 'Offer not found');
       }
 
-      return c.json({
-        success: true,
-        offer,
-      });
+      return c.json(offer);
     } catch (error) {
       logger.error('Failed to get offer:', error);
       return serveBadRequest(c, 'Failed to get offer');
@@ -221,7 +214,6 @@ export class OfferController {
       });
 
       return c.json({
-        success: true,
         message: 'Offer updated successfully',
       });
     } catch (error) {
@@ -265,7 +257,6 @@ export class OfferController {
       await this.offerService.update(id, updateData);
 
       return c.json({
-        success: true,
         message: 'Offer updated successfully',
       });
     } catch (error) {
@@ -303,7 +294,6 @@ export class OfferController {
       await this.offerService.toggleStatus(id, body.status);
 
       return c.json({
-        success: true,
         message: `Offer status changed to ${body.status}`,
       });
     } catch (error) {
@@ -330,7 +320,6 @@ export class OfferController {
       await this.offerService.toggleAllForUser(user.id, body.status);
 
       return c.json({
-        success: true,
         message: `All offers status changed to ${body.status}`,
       });
     } catch (error) {
@@ -367,7 +356,6 @@ export class OfferController {
       await this.offerService.delete(id);
 
       return c.json({
-        success: true,
         message: 'Offer deleted successfully',
       });
     } catch (error) {
@@ -392,7 +380,6 @@ export class OfferController {
       await this.offerService.deleteByUserId(user.id);
 
       return c.json({
-        success: true,
         message: 'All offers deleted successfully',
       });
     } catch (error) {
