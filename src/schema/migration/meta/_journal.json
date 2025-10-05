@@ -57,6 +57,34 @@
       "when": 1759668336262,
       "tag": "0007_mushy_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1759669354672,
+      "tag": "0008_acoustic_sentry",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1759670432537,
+      "tag": "0009_tidy_earthquake",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1759670569060,
+      "tag": "0010_amazing_doctor_strange",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1759670655361,
+      "tag": "0011_unique_mercury",
+      "breakpoints": true
     }
   ]
 }

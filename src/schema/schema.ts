@@ -123,6 +123,8 @@ export const offersSchema = mysqlTable('offers', {
   terms: text('terms').notNull(),
   instructions: text('instructions').notNull(),
   currency: varchar('currency', { length: 3 }).notNull(),
+  minimum: decimal('minimum', { precision: 20, scale: 2 }).notNull().default('0.00'),
+  maximum: decimal('maximum', { precision: 20, scale: 2 }).notNull().default('0.00'),
   method_id: int('method_id')
     .references(() => methodsSchema.id)
     .notNull(),
@@ -144,8 +146,7 @@ export const offersSchema = mysqlTable('offers', {
 
 export const tradesSchema = mysqlTable('trades', {
   id: serial('id').primaryKey(),
-  requestId: text('requestId'),
-  type: mysqlEnum('type', ['buy', 'sell']).notNull(),
+  request_id: text('request_id'),
   flag_expired: varchar('flag_expired', { length: 255 }).default('NOT_EXPIRED'),
   fiat_amount_original: decimal('fiat_amount_original', { precision: 20, scale: 2 })
     .notNull()
@@ -224,7 +225,7 @@ export const bitgoTxSchema = mysqlTable('bitgo_tx', {
   payGoFee: varchar('payGoFee', { length: 255 }),
   total_fee: decimal('total_fee', { precision: 20, scale: 8 }).default('0.00000000'),
   coinpes_fee: decimal('coinpes_fee', { precision: 20, scale: 8 }).default('0.00000000'),
-  requestId: varchar('requestId', { length: 255 }),
+  request_id: varchar('request_id', { length: 255 }),
   created_at: timestamp('created_at').defaultNow(),
   updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
 });
@@ -247,7 +248,7 @@ export const internalSchema = mysqlTable('internal', {
 
 export const feedbackSchema = mysqlTable('feedback', {
   id: serial('id').primaryKey(),
-  requestId: varchar('requestId', { length: 255 }).notNull(),
+  request_id: varchar('request_id', { length: 255 }).notNull(),
   trade_id: int('trade_id')
     .references(() => tradesSchema.id)
     .notNull(),

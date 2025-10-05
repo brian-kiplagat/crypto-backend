@@ -6,6 +6,7 @@ import { validateSchema } from './validator.js';
 const createTradeSchema = z.object({
   offer_id: z.number().int().positive('Offer ID must be a positive integer'),
   fiat_amount: z.number().positive('Fiat amount must be a positive number'),
+  request_id: z.string(),
 });
 
 const createTradeValidator = validator('json', (value, c) => {

@@ -60,11 +60,17 @@ export class TradeController {
       }
 
       const body: CreateTradeBody = await c.req.json();
-      const { offer_id, fiat_amount } = body;
+      const { offer_id, fiat_amount, request_id } = body;
       // Get the offer
       const offer = await this.offerService.findById(offer_id);
       if (!offer) {
         throw new Error('Offer not found. Check if you have the correct link');
+      }
+
+      //de duplicate trade check
+      const request = await this.tradeService.findByRequestId(request_id);
+      if (request) {
+        return serveBadRequest(c, 'Ops, this trade is already created');
       }
 
       // Validate offer is active
@@ -91,13 +97,22 @@ export class TradeController {
         return serveBadRequest(c, 'Your full name is required for this offer');
       }
 
+      // Validate fiat amount is within offer minimum and maximum
+      const min = parseFloat(offer.minimum);
+      const max = parseFloat(offer.maximum);
+      if (min && fiat_amount < min) {
+        return serveBadRequest(c, `Enter an amount ≥ ${min}`);
+      }
+      if (max && fiat_amount > max) {
+        return serveBadRequest(c, `Enter an amount ≤ ${max}`);
+      }
+
       // Trades count rules
       const myTrades = await this.tradeService.getCount(user.id);
       if (offer.new_trader_limit && myTrades < (offer.minimum_trades ?? 0)) {
         return serveBadRequest(
           c,
-          `This offer requires at least ${offer.minimum_trades} completed trades. You currently have ${myTrades}.`
-
+          `This offer requires at least ${offer.minimum_trades} completed trades. You currently have ${myTrades}.`,
         );
       }
 
@@ -152,16 +167,12 @@ export class TradeController {
         (sellerBalance - btcAmountOriginal).toFixed(8),
       );
 
-      // Generate unique request ID
-      const requestId = crypto.randomUUID();
-
       // Set expiry time (30 minutes from now)
       const expiryTime = new Date();
       expiryTime.setMinutes(expiryTime.getMinutes() + 30);
 
       const tradeData: NewTrade = {
-        requestId,
-        type: 'buy',
+        request_id: request_id,
         fiat_amount_original: fiat_amount.toString(),
         fiat_amount_with_margin: pricing.fiat_amount_with_margin.toFixed(2).toString(),
         btc_amount_with_margin: pricing.btc_amount_with_margin.toFixed(8).toString(),
