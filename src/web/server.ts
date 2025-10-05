@@ -119,7 +119,7 @@ export class Server {
     this.registerWorker(userService, emailService);
 
     // Setup controllers
-    const authController = new AuthController(userService, bitgoService);
+    const authController = new AuthController(userService, bitgoService, walletService);
 
     const emailController = new EmailController(emailService, userService);
 

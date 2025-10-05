@@ -25,14 +25,17 @@ import type {
 import { ERRORS, MAIL_CONTENT, serveBadRequest, serveInternalServerError } from './resp/error.js';
 import { serveData } from './resp/resp.js';
 import { serializeUser } from './serializer/user.js';
+import { WalletService } from '../../service/wallet.ts';
 
 export class AuthController {
   private service: UserService;
   private bitgoService: BitgoService;
+  private walletService: WalletService;
 
-  constructor(userService: UserService, bitgoService: BitgoService) {
+  constructor(userService: UserService, bitgoService: BitgoService, walletService: WalletService) {
     this.service = userService;
     this.bitgoService = bitgoService;
+    this.walletService = walletService;
   }
 
   /**
@@ -329,8 +332,10 @@ export class AuthController {
       return serveInternalServerError(c, new Error(ERRORS.USER_NOT_FOUND));
     }
 
+    const wallet = await this.walletService.findByUserId(user.id);
+
     const serializedUser = await serializeUser(user);
-    return serveData(c, { user: serializedUser });
+    return serveData(c, { user: serializedUser, wallet });
   };
 
   /**
