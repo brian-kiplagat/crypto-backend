@@ -56,7 +56,9 @@ import {
   resolveDisputeValidator,
 } from './validator/trade.ts';
 import {
+  disable2FaValidator,
   emailVerificationValidator,
+  generate2FaSetupValidator,
   inAppResetPasswordValidator,
   loginValidator,
   registerTokenValidator,
@@ -64,6 +66,7 @@ import {
   requestResetPasswordValidator,
   resetPasswordValidator,
   updateUserDetailsValidator,
+  verify2FaValidator,
 } from './validator/user.js';
 
 export class Server {
@@ -166,6 +169,11 @@ export class Server {
       authCtrl.resetPasswordInApp,
     );
     user.put('/details', authCheck, updateUserDetailsValidator, authCtrl.updateUserDetails);
+
+    // 2FA routes
+    user.post('/2fa/setup', generate2FaSetupValidator, authCtrl.generate2FaSetup);
+    user.post('/2fa/verify', verify2FaValidator, authCtrl.verify2Fa);
+    user.post('/2fa/disable', authCheck, disable2FaValidator, authCtrl.disable2Fa);
 
     // Add Google auth routes
     user.get('/auth/google', googleCtrl.initiateAuth);

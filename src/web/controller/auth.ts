@@ -14,7 +14,9 @@ import { WalletService } from '../../service/wallet.ts';
 import sendWelcomeEmailAsync from '../../task/client/sendWelcomeEmailAsync.js';
 import { sendTransactionalEmail } from '../../task/email-processor.ts';
 import type {
+  Disable2FaBody,
   EmailVerificationBody,
+  Generate2FaSetupBody,
   InAppResetPasswordBody,
   LoginBody,
   RegisterTokenBody,
@@ -22,6 +24,7 @@ import type {
   RequestResetPasswordBody,
   ResetPasswordBody,
   UpdateUserDetailsBody,
+  Verify2FaBody,
 } from '../validator/user.js';
 import { ERRORS, MAIL_CONTENT, serveBadRequest, serveInternalServerError } from './resp/error.js';
 import { serializeUser } from './serializer/user.js';
@@ -383,6 +386,77 @@ export class AuthController {
       });
     } catch (error) {
       logger.error(error);
+      return serveInternalServerError(c, error);
+    }
+  };
+
+  public generate2FaSetup = async (c: Context) => {
+    try {
+      const user = await this.getUser(c);
+      if (!user) {
+        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+      }
+      const body: Generate2FaSetupBody = await c.req.json();
+      const { email } = body;
+
+      const { qrCode, secret } = await this.service.generate2FaSetup(email);
+
+      return c.json({
+        qrCode,
+        secret,
+        message: '2FA setup generated successfully',
+      });
+    } catch (error) {
+      logger.error('Error setting up 2FA:', error);
+      return serveInternalServerError(c, error);
+    }
+  };
+
+  public verify2Fa = async (c: Context) => {
+    try {
+      const user = await this.getUser(c);
+      if (!user) {
+        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+      }
+      const body: Verify2FaBody = await c.req.json();
+      const { token } = body;
+      if (!user.two_factor_secret) {
+        return serveBadRequest(c, ERRORS.INVALID_TOKEN);
+      }
+
+      const isValid = this.service.verify2Fa(user.two_factor_secret, token);
+
+      return c.json({
+        valid: isValid,
+        message: isValid ? 'Token is valid' : 'Token is invalid',
+      });
+    } catch (error) {
+      logger.error('Error verifying 2FA token:', error);
+      return serveInternalServerError(c, error);
+    }
+  };
+
+  public disable2Fa = async (c: Context) => {
+    try {
+      const user = await this.getUser(c);
+      if (!user) {
+        return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
+      }
+      const body: Disable2FaBody = await c.req.json();
+      const { token } = body;
+
+      const success = await this.service.disable2Fa(user.id, token);
+
+      if (!success) {
+        return serveBadRequest(c, ERRORS.INVALID_TOKEN);
+      }
+
+      return c.json({
+        success: true,
+        message: '2FA disabled successfully',
+      });
+    } catch (error) {
+      logger.error('Error disabling 2FA:', error);
       return serveInternalServerError(c, error);
     }
   };

@@ -87,6 +87,30 @@ const uploadProfileImageValidator = validator('json', (value, c) => {
   return validateSchema(c, uploadProfileImageSchema, value);
 });
 
+const generate2FaSetupSchema = z.object({
+  email: z.string().email(),
+});
+
+const generate2FaSetupValidator = validator('json', (value, c) => {
+  return validateSchema(c, generate2FaSetupSchema, value);
+});
+
+const verify2FaSchema = z.object({
+  token: z.string().length(6),
+});
+
+const verify2FaValidator = validator('json', (value, c) => {
+  return validateSchema(c, verify2FaSchema, value);
+});
+
+const disable2FaSchema = z.object({
+  token: z.string().length(6),
+});
+
+const disable2FaValidator = validator('json', (value, c) => {
+  return validateSchema(c, disable2FaSchema, value);
+});
+
 type LoginBody = z.infer<typeof loginSchema>;
 type RegistrationBody = z.infer<typeof registrationSchema>;
 type EmailVerificationBody = z.infer<typeof emailVerificationSchema>;
@@ -97,10 +121,17 @@ type InAppResetPasswordBody = z.infer<typeof inAppResetPasswordSchema>;
 
 type UpdateUserDetailsBody = z.infer<typeof updateUserDetailsSchema>;
 type UploadProfileImageBody = z.infer<typeof uploadProfileImageSchema>;
+type Generate2FaSetupBody = z.infer<typeof generate2FaSetupSchema>;
+type Verify2FaBody = z.infer<typeof verify2FaSchema>;
+type Disable2FaBody = z.infer<typeof disable2FaSchema>;
 
 export {
+  type Disable2FaBody,
+  disable2FaValidator,
   type EmailVerificationBody,
   emailVerificationValidator,
+  type Generate2FaSetupBody,
+  generate2FaSetupValidator,
   type InAppResetPasswordBody,
   inAppResetPasswordValidator,
   type LoginBody,
@@ -117,4 +148,6 @@ export {
   updateUserDetailsValidator,
   type UploadProfileImageBody,
   uploadProfileImageValidator,
+  type Verify2FaBody,
+  verify2FaValidator,
 };
