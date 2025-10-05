@@ -407,7 +407,7 @@ export class AuthController {
         message: '2FA setup generated successfully',
       });
     } catch (error) {
-      logger.error('Error setting up 2FA:', error);
+      logger.error(error);
       return serveInternalServerError(c, error);
     }
   };
@@ -431,7 +431,7 @@ export class AuthController {
         message: isValid ? 'Token is valid' : 'Token is invalid',
       });
     } catch (error) {
-      logger.error('Error verifying 2FA token:', error);
+      logger.error(error);
       return serveInternalServerError(c, error);
     }
   };
@@ -456,7 +456,7 @@ export class AuthController {
         message: '2FA disabled successfully',
       });
     } catch (error) {
-      logger.error('Error disabling 2FA:', error);
+      logger.error(error);
       return serveInternalServerError(c, error);
     }
   };
