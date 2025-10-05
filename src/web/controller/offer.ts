@@ -51,12 +51,8 @@ export class OfferController {
       const { label, terms, instructions, currency, method_id, margin } = body;
 
       const offerId = await this.offerService.create({
+        ...body,
         user_id: user.id,
-        label,
-        terms,
-        instructions,
-        currency,
-        method_id,
         margin: margin.toString(),
         status: 'active',
         active: true,
