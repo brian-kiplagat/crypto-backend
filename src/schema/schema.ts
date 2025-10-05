@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
+  decimal,
   int,
   json,
   mysqlEnum,
@@ -77,7 +78,6 @@ export const emailsSchema = mysqlTable('emails', {
   updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
 });
 
-// Add to your schema
 export const bitcoinAddressSchema = mysqlTable('bitcoin_addresses', {
   id: serial('id').primaryKey(),
   user_id: int('user_id').references(() => userSchema.id),
@@ -91,6 +91,178 @@ export const bitcoinAddressSchema = mysqlTable('bitcoin_addresses', {
   metadata: json('metadata'),
 });
 
+export const countriesSchema = mysqlTable('countries', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  iso: varchar('iso', { length: 2 }).notNull().unique(),
+  iso3: varchar('iso3', { length: 3 }).notNull().unique(),
+  dial: varchar('dial', { length: 5 }).notNull(),
+  currency: varchar('currency', { length: 3 }),
+  currency_name: varchar('currency_name', { length: 100 }),
+  reason: varchar('reason', { length: 255 }),
+  active: boolean('active').default(true),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export const methodsSchema = mysqlTable('methods', {
+  id: serial('id').primaryKey(),
+  method_name: varchar('method_name', { length: 255 }).notNull(),
+  active: boolean('active').default(true),
+});
+
+export const offersSchema = mysqlTable('offers', {
+  id: serial('id').primaryKey(),
+  user_id: int('user_id')
+    .references(() => userSchema.id)
+    .notNull(),
+  label: varchar('label', { length: 255 }).notNull(),
+  terms: text('terms').notNull(),
+  instructions: text('instructions').notNull(),
+  currency: varchar('currency', { length: 3 }).notNull(),
+  method: varchar('method', { length: 100 }).notNull(),
+  exchange_rate: decimal('exchange_rate', { precision: 20, scale: 8 }).notNull(),
+  margin: decimal('margin', { precision: 20, scale: 2 }).notNull(),
+  status: mysqlEnum('status', ['active', 'inactive', 'paused']).default('active'),
+  active: boolean('active').default(true),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export const tradesSchema = mysqlTable('trades', {
+  id: serial('id').primaryKey(),
+  requestId: text('requestId'),
+  type: mysqlEnum('type', ['buy', 'sell']).notNull(),
+  flag_expired: varchar('flag_expired', { length: 255 }).default('NOT_EXPIRED'),
+  fiat_amount_original: decimal('fiat_amount_original', { precision: 20, scale: 2 })
+    .notNull()
+    .default('0.00'),
+  fiat_amount_with_margin: decimal('fiat_amount_with_margin', { precision: 20, scale: 2 })
+    .notNull()
+    .default('0.00'),
+  btc_amount_with_margin: decimal('btc_amount_with_margin', { precision: 20, scale: 8 })
+    .notNull()
+    .default('0.00000000'),
+  btc_amount_original: decimal('btc_amount_original', { precision: 20, scale: 8 })
+    .notNull()
+    .default('0.00000000'),
+  price: decimal('price', { precision: 20, scale: 2 }).default('0.00'),
+  buyer: int('buyer')
+    .references(() => userSchema.id)
+    .notNull(),
+  seller: int('seller')
+    .references(() => userSchema.id)
+    .notNull(),
+  status: mysqlEnum('status', [
+    'OPENED',
+    'PAID',
+    'SUCCESSFUL',
+    'CANCELLED_BUYER',
+    'CANCELLED_SELLER',
+    'CANCELLED_SYSTEM',
+    'AWARDED_BUYER',
+    'AWARDED_SELLER',
+    'DISPUTED',
+  ]).default('OPENED'),
+  moderator_flag: varchar('moderator_flag', { length: 255 }).default('NA'),
+  offer_id: int('offer_id')
+    .references(() => offersSchema.id)
+    .notNull(),
+  cancelled: varchar('cancelled', { length: 100 }).default('NA'),
+  dispute_started: boolean('dispute_started').default(false),
+  dispute_time: timestamp('dispute_time'),
+  dispute_time_resolve: timestamp('dispute_time_resolve'),
+  dispute_reason: varchar('dispute_reason', { length: 255 }),
+  dispute_explanation: varchar('dispute_explanation', { length: 255 }),
+  dispute_started_by: varchar('dispute_started_by', { length: 50 }),
+  dispute_mod_notes: varchar('dispute_mod_notes', { length: 255 }),
+  escrow_return: boolean('escrow_return').default(false),
+  expiry_time: timestamp('expiry_time'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export const bitgoTxSchema = mysqlTable('bitgo_tx', {
+  id: serial('id').primaryKey(),
+  type: varchar('type', { length: 255 }).notNull(),
+  wallet: varchar('wallet', { length: 255 }).notNull(),
+  coin: varchar('coin', { length: 255 }).notNull(),
+  transfer: varchar('transfer', { length: 255 }).notNull(),
+  hash: varchar('hash', { length: 255 }).notNull(),
+  amount: decimal('amount', { precision: 20, scale: 8 }).notNull(),
+  state: varchar('state', { length: 255 }).notNull(),
+  ip: varchar('ip', { length: 255 }).notNull(),
+  paid: boolean('paid').default(false),
+  usd: decimal('usd', { precision: 20, scale: 2 }).notNull(),
+  usdrate: decimal('usdrate', { precision: 20, scale: 8 }).notNull(),
+  height: varchar('height', { length: 255 }).notNull(),
+  email: int('email')
+    .references(() => userSchema.email)
+    .notNull(),
+  user_id: int('user_id')
+    .references(() => userSchema.id)
+    .notNull(),
+  confirmations: varchar('confirmations', { length: 255 }).notNull(),
+  satoshi: decimal('satoshi', { precision: 20, scale: 8 }).notNull(),
+  reason: varchar('reason', { length: 255 }).notNull(),
+  tx: text('tx'),
+  status: varchar('status', { length: 255 }),
+  feeString: varchar('feeString', { length: 255 }),
+  payGoFee: varchar('payGoFee', { length: 255 }),
+  total_fee: decimal('total_fee', { precision: 20, scale: 8 }).default('0.00000000'),
+  coinpes_fee: decimal('coinpes_fee', { precision: 20, scale: 8 }).default('0.00000000'),
+  requestId: varchar('requestId', { length: 255 }),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export const internalSchema = mysqlTable('internal', {
+  id: serial('id').primaryKey(),
+  amount_btc: decimal('amount_btc', { precision: 20, scale: 8 }).notNull().default('0.00000000'),
+  fiat: decimal('fiat', { precision: 20, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).notNull(),
+  sender: int('sender')
+    .references(() => userSchema.id)
+    .notNull(),
+  recepient: int('recepient')
+    .references(() => userSchema.id)
+    .notNull(),
+  request_id: varchar('request_id', { length: 255 }).notNull(),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export const feedbackSchema = mysqlTable('feedback', {
+  id: serial('id').primaryKey(),
+  requestId: varchar('requestId', { length: 255 }).notNull(),
+  trade_id: int('trade_id')
+    .references(() => tradesSchema.id)
+    .notNull(),
+  comment: text('comment').default('No comment yet'),
+  flag: text('flag').default('N/A'),
+  user_id: int('user_id')
+    .references(() => userSchema.id)
+    .notNull(),
+  target: int('target')
+    .references(() => userSchema.id)
+    .notNull(),
+  currency: varchar('currency', { length: 3 }).notNull(),
+  method: varchar('method', { length: 50 }).notNull(),
+  photo_url: varchar('photo_url', { length: 255 }).default('https://api.coinpes.com/avatar.webp'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export const offerCountryRestrictionsSchema = mysqlTable('offer_country_restrictions', {
+  id: serial('id').primaryKey(),
+  offer_id: int('offer_id')
+    .references(() => offersSchema.id)
+    .notNull(),
+  country_iso: varchar('country_iso', { length: 2 }).notNull(),
+  restriction_type: mysqlEnum('restriction_type', ['allowed', 'blocked']).notNull(),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
 export type Email = typeof emailsSchema.$inferSelect;
 export type Notification = typeof notificationsSchema.$inferSelect;
 export type NewNotification = typeof notificationsSchema.$inferInsert;
@@ -99,6 +271,24 @@ export type User = typeof userSchema.$inferSelect;
 export type BitcoinAddress = typeof bitcoinAddressSchema.$inferSelect;
 export type NewUser = typeof userSchema.$inferInsert;
 export type NewBitcoinAddress = typeof bitcoinAddressSchema.$inferInsert;
+
+// New schema types
+export type Country = typeof countriesSchema.$inferSelect;
+export type NewCountry = typeof countriesSchema.$inferInsert;
+export type Method = typeof methodsSchema.$inferSelect;
+export type NewMethod = typeof methodsSchema.$inferInsert;
+export type Offer = typeof offersSchema.$inferSelect;
+export type NewOffer = typeof offersSchema.$inferInsert;
+export type Trade = typeof tradesSchema.$inferSelect;
+export type NewTrade = typeof tradesSchema.$inferInsert;
+export type BitgoTx = typeof bitgoTxSchema.$inferSelect;
+export type NewBitgoTx = typeof bitgoTxSchema.$inferInsert;
+export type Internal = typeof internalSchema.$inferSelect;
+export type NewInternal = typeof internalSchema.$inferInsert;
+export type Feedback = typeof feedbackSchema.$inferSelect;
+export type NewFeedback = typeof feedbackSchema.$inferInsert;
+export type OfferCountryRestriction = typeof offerCountryRestrictionsSchema.$inferSelect;
+export type NewOfferCountryRestriction = typeof offerCountryRestrictionsSchema.$inferInsert;
 
 // Define relations
 
@@ -122,3 +312,72 @@ export const bitcoinAddressRelations = relations(bitcoinAddressSchema, ({ one })
     references: [userSchema.id],
   }),
 }));
+
+export const offerRelations = relations(offersSchema, ({ one }) => ({
+  user: one(userSchema, {
+    fields: [offersSchema.user_id],
+    references: [userSchema.id],
+  }),
+}));
+
+export const tradeRelations = relations(tradesSchema, ({ one }) => ({
+  offer: one(offersSchema, {
+    fields: [tradesSchema.offer_id],
+    references: [offersSchema.id],
+  }),
+  buyerUser: one(userSchema, {
+    fields: [tradesSchema.buyer],
+    references: [userSchema.id],
+  }),
+  sellerUser: one(userSchema, {
+    fields: [tradesSchema.seller],
+    references: [userSchema.id],
+  }),
+}));
+
+export const bitgoTxRelations = relations(bitgoTxSchema, ({ one }) => ({
+  user: one(userSchema, {
+    fields: [bitgoTxSchema.user_id],
+    references: [userSchema.id],
+  }),
+  emailUser: one(userSchema, {
+    fields: [bitgoTxSchema.email],
+    references: [userSchema.email],
+  }),
+}));
+
+export const internalRelations = relations(internalSchema, ({ one }) => ({
+  senderUser: one(userSchema, {
+    fields: [internalSchema.sender],
+    references: [userSchema.id],
+  }),
+  recipientUser: one(userSchema, {
+    fields: [internalSchema.recepient],
+    references: [userSchema.id],
+  }),
+}));
+
+export const feedbackRelations = relations(feedbackSchema, ({ one }) => ({
+  user: one(userSchema, {
+    fields: [feedbackSchema.user_id],
+    references: [userSchema.id],
+  }),
+  targetUser: one(userSchema, {
+    fields: [feedbackSchema.target],
+    references: [userSchema.id],
+  }),
+}));
+
+export const offerCountryRestrictionsRelations = relations(
+  offerCountryRestrictionsSchema,
+  ({ one }) => ({
+    offer: one(offersSchema, {
+      fields: [offerCountryRestrictionsSchema.offer_id],
+      references: [offersSchema.id],
+    }),
+    country: one(countriesSchema, {
+      fields: [offerCountryRestrictionsSchema.country_iso],
+      references: [countriesSchema.iso],
+    }),
+  }),
+);

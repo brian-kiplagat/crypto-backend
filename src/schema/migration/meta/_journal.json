@@ -22,6 +22,13 @@
       "when": 1759607807184,
       "tag": "0002_furry_electro",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1759659791906,
+      "tag": "0003_yellow_tyger_tiger",
+      "breakpoints": true
     }
   ]
 }
