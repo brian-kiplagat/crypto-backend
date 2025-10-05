@@ -171,8 +171,8 @@ export class Server {
     user.put('/details', authCheck, updateUserDetailsValidator, authCtrl.updateUserDetails);
 
     // 2FA routes
-    user.post('/2fa/setup', generate2FaSetupValidator, authCtrl.generate2FaSetup);
-    user.post('/2fa/verify', verify2FaValidator, authCtrl.verify2Fa);
+    user.post('/2fa/setup', authCheck, generate2FaSetupValidator, authCtrl.generate2FaSetup);
+    user.post('/2fa/verify', authCheck, verify2FaValidator, authCtrl.verify2Fa);
     user.post('/2fa/disable', authCheck, disable2FaValidator, authCtrl.disable2Fa);
 
     // Add Google auth routes

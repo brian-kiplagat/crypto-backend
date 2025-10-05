@@ -16,7 +16,6 @@ import { sendTransactionalEmail } from '../../task/email-processor.ts';
 import type {
   Disable2FaBody,
   EmailVerificationBody,
-  Generate2FaSetupBody,
   InAppResetPasswordBody,
   LoginBody,
   RegisterTokenBody,
@@ -396,10 +395,8 @@ export class AuthController {
       if (!user) {
         return serveBadRequest(c, ERRORS.USER_NOT_FOUND);
       }
-      const body: Generate2FaSetupBody = await c.req.json();
-      const { email } = body;
 
-      const { qrCode, secret } = await this.service.generate2FaSetup(email);
+      const { qrCode, secret } = await this.service.generate2FaSetup(user.email);
 
       return c.json({
         qrCode,
