@@ -15,8 +15,30 @@ export class TradeRepository {
       where: eq(tradesSchema.id, id),
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -26,8 +48,30 @@ export class TradeRepository {
       where: eq(tradesSchema.request_id, requestId),
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -38,8 +82,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.created_at)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -50,8 +116,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.created_at)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -62,8 +150,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.created_at)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -74,8 +184,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.created_at)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -86,8 +218,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.created_at)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -98,8 +252,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.created_at)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -110,8 +286,30 @@ export class TradeRepository {
       orderBy: [desc(tradesSchema.dispute_time)],
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
@@ -169,8 +367,30 @@ export class TradeRepository {
       offset,
       with: {
         offer: true,
-        buyer: true,
-        seller: true,
+        buyer: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
+        seller: {
+          columns: {
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            role: true,
+            profile_picture: true,
+            bio: true,
+            is_verified: true,
+            health: true,
+          },
+        },
       },
     });
   }
