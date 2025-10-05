@@ -344,11 +344,11 @@ export const tradeRelations = relations(tradesSchema, ({ one }) => ({
     fields: [tradesSchema.offer_id],
     references: [offersSchema.id],
   }),
-  buyerUser: one(userSchema, {
+  buyer: one(userSchema, {
     fields: [tradesSchema.buyer],
     references: [userSchema.id],
   }),
-  sellerUser: one(userSchema, {
+  seller: one(userSchema, {
     fields: [tradesSchema.seller],
     references: [userSchema.id],
   }),
@@ -359,18 +359,18 @@ export const bitgoTxRelations = relations(bitgoTxSchema, ({ one }) => ({
     fields: [bitgoTxSchema.user_id],
     references: [userSchema.id],
   }),
-  emailUser: one(userSchema, {
+  email: one(userSchema, {
     fields: [bitgoTxSchema.email],
     references: [userSchema.email],
   }),
 }));
 
 export const internalRelations = relations(internalSchema, ({ one }) => ({
-  senderUser: one(userSchema, {
+  sender: one(userSchema, {
     fields: [internalSchema.sender],
     references: [userSchema.id],
   }),
-  recipientUser: one(userSchema, {
+  recipient: one(userSchema, {
     fields: [internalSchema.recepient],
     references: [userSchema.id],
   }),
@@ -381,7 +381,7 @@ export const feedbackRelations = relations(feedbackSchema, ({ one }) => ({
     fields: [feedbackSchema.user_id],
     references: [userSchema.id],
   }),
-  targetUser: one(userSchema, {
+  target: one(userSchema, {
     fields: [feedbackSchema.target],
     references: [userSchema.id],
   }),
