@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "69c3e8dd-cd0c-45ee-a960-fc0095bd525b",
-  "prevId": "946a9214-1b3e-4447-9765-a1fa7021071a",
+  "id": "4fc6232b-d920-4ded-9b96-16e799b62e44",
+  "prevId": "69c3e8dd-cd0c-45ee-a960-fc0095bd525b",
   "tables": {
     "bitcoin_addresses": {
       "name": "bitcoin_addresses",
@@ -85,8 +85,12 @@
           "name": "bitcoin_addresses_user_id_user_id_fk",
           "tableFrom": "bitcoin_addresses",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -94,13 +98,17 @@
       "compositePrimaryKeys": {
         "bitcoin_addresses_id": {
           "name": "bitcoin_addresses_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {
         "bitcoin_addresses_address_unique": {
           "name": "bitcoin_addresses_address_unique",
-          "columns": ["address"]
+          "columns": [
+            "address"
+          ]
         }
       },
       "checkConstraint": {}
@@ -310,8 +318,12 @@
           "name": "bitgo_tx_email_user_email_fk",
           "tableFrom": "bitgo_tx",
           "tableTo": "user",
-          "columnsFrom": ["email"],
-          "columnsTo": ["email"],
+          "columnsFrom": [
+            "email"
+          ],
+          "columnsTo": [
+            "email"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -319,8 +331,12 @@
           "name": "bitgo_tx_user_id_user_id_fk",
           "tableFrom": "bitgo_tx",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -328,7 +344,9 @@
       "compositePrimaryKeys": {
         "bitgo_tx_id": {
           "name": "bitgo_tx_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -424,17 +442,23 @@
       "compositePrimaryKeys": {
         "countries_id": {
           "name": "countries_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {
         "countries_iso_unique": {
           "name": "countries_iso_unique",
-          "columns": ["iso"]
+          "columns": [
+            "iso"
+          ]
         },
         "countries_iso3_unique": {
           "name": "countries_iso3_unique",
-          "columns": ["iso3"]
+          "columns": [
+            "iso3"
+          ]
         }
       },
       "checkConstraint": {}
@@ -561,8 +585,12 @@
           "name": "emails_user_id_user_id_fk",
           "tableFrom": "emails",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -570,7 +598,9 @@
       "compositePrimaryKeys": {
         "emails_id": {
           "name": "emails_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -676,8 +706,12 @@
           "name": "feedback_trade_id_trades_id_fk",
           "tableFrom": "feedback",
           "tableTo": "trades",
-          "columnsFrom": ["trade_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "trade_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -685,8 +719,12 @@
           "name": "feedback_user_id_user_id_fk",
           "tableFrom": "feedback",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -694,8 +732,12 @@
           "name": "feedback_target_user_id_fk",
           "tableFrom": "feedback",
           "tableTo": "user",
-          "columnsFrom": ["target"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "target"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -703,7 +745,9 @@
       "compositePrimaryKeys": {
         "feedback_id": {
           "name": "feedback_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -786,8 +830,12 @@
           "name": "internal_sender_user_id_fk",
           "tableFrom": "internal",
           "tableTo": "user",
-          "columnsFrom": ["sender"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sender"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -795,8 +843,12 @@
           "name": "internal_recepient_user_id_fk",
           "tableFrom": "internal",
           "tableTo": "user",
-          "columnsFrom": ["recepient"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "recepient"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -804,7 +856,9 @@
       "compositePrimaryKeys": {
         "internal_id": {
           "name": "internal_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -841,7 +895,9 @@
       "compositePrimaryKeys": {
         "methods_id": {
           "name": "methods_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -931,8 +987,12 @@
           "name": "notifications_user_id_user_id_fk",
           "tableFrom": "notifications",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -940,7 +1000,9 @@
       "compositePrimaryKeys": {
         "notifications_id": {
           "name": "notifications_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -992,8 +1054,12 @@
           "name": "offer_country_restrictions_offer_id_offers_id_fk",
           "tableFrom": "offer_country_restrictions",
           "tableTo": "offers",
-          "columnsFrom": ["offer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "offer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1001,7 +1067,9 @@
       "compositePrimaryKeys": {
         "offer_country_restrictions_id": {
           "name": "offer_country_restrictions_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -1089,6 +1157,84 @@
           "autoincrement": false,
           "default": true
         },
+        "deauth": {
+          "name": "deauth",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "id_verification": {
+          "name": "id_verification",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "full_name_required": {
+          "name": "full_name_required",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "min_trades": {
+          "name": "min_trades",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        },
+        "new_trader_limit": {
+          "name": "new_trader_limit",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "limit_block": {
+          "name": "limit_block",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        },
+        "vpn": {
+          "name": "vpn",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "limit_countries": {
+          "name": "limit_countries",
+          "type": "enum('none','blocked','allowed')",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'none'"
+        },
+        "blocked_countries": {
+          "name": "blocked_countries",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "allowed_countries": {
+          "name": "allowed_countries",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -1113,8 +1259,12 @@
           "name": "offers_user_id_user_id_fk",
           "tableFrom": "offers",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1122,7 +1272,9 @@
       "compositePrimaryKeys": {
         "offers_id": {
           "name": "offers_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -1334,8 +1486,12 @@
           "name": "trades_buyer_user_id_fk",
           "tableFrom": "trades",
           "tableTo": "user",
-          "columnsFrom": ["buyer"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "buyer"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1343,8 +1499,12 @@
           "name": "trades_seller_user_id_fk",
           "tableFrom": "trades",
           "tableTo": "user",
-          "columnsFrom": ["seller"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "seller"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1352,8 +1512,12 @@
           "name": "trades_offer_id_offers_id_fk",
           "tableFrom": "trades",
           "tableTo": "offers",
-          "columnsFrom": ["offer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "offer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1361,7 +1525,9 @@
       "compositePrimaryKeys": {
         "trades_id": {
           "name": "trades_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -1481,13 +1647,13 @@
           "autoincrement": false,
           "default": false
         },
-        "is_banned": {
-          "name": "is_banned",
-          "type": "boolean",
+        "health": {
+          "name": "health",
+          "type": "enum('active','banned','on_hold','suspended','blocked')",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": false
+          "default": "'active'"
         },
         "is_deleted": {
           "name": "is_deleted",
@@ -1533,13 +1699,17 @@
       "compositePrimaryKeys": {
         "user_id": {
           "name": "user_id",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {
         "user_email_unique": {
           "name": "user_email_unique",
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       },
       "checkConstraint": {}
@@ -1549,7 +1719,9 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"user\".\"is_banned\"": "\"user\".\"health\""
+    }
   },
   "internal": {
     "tables": {},

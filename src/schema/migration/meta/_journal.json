@@ -36,6 +36,13 @@
       "when": 1759663870809,
       "tag": "0004_uneven_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1759666600182,
+      "tag": "0005_long_cerise",
+      "breakpoints": true
     }
   ]
 }

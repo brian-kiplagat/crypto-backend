@@ -30,6 +30,7 @@ import { NotificationController } from './controller/notification.ts';
 import { OfferController } from './controller/offer.ts';
 import { ERRORS, serveInternalServerError, serveNotFound } from './controller/resp/error.js';
 import { TradeController } from './controller/trade.ts';
+import { geolocation } from './middleware/geolocation.ts';
 import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
 import {
   createNotificationValidator,
@@ -216,6 +217,7 @@ export class Server {
 
     // Apply auth middleware for all offer routes
     offer.use(authCheck);
+    offer.use(geolocation());
 
     // Offer routes
     offer.post('/', createOfferValidator, offerCtrl.createOffer);
@@ -240,6 +242,7 @@ export class Server {
     trade.post('/price', getTradePriceValidator, tradeCtrl.getTradePrice);
     // Apply auth middleware for all trade routes
     trade.use(authCheck);
+    trade.use(geolocation());
 
     // Trade routes
     trade.post('/', createTradeValidator, tradeCtrl.createTrade);
