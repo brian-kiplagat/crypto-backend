@@ -397,12 +397,8 @@ export class AuthController {
       }
 
       const { qrCode, secret } = await this.service.generate2FaSetup(user.email);
-
-      return c.json({
-        qrCode,
-        secret,
-        message: '2FA setup generated successfully',
-      });
+      await this.service.update(user.id, { two_factor_secret: secret });
+      return c.json({ qrCode, secret, message: '2FA setup generated successfully' });
     } catch (error) {
       logger.error(error);
       return serveInternalServerError(c, error);
