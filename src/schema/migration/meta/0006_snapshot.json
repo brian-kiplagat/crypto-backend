@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "4fc6232b-d920-4ded-9b96-16e799b62e44",
-  "prevId": "69c3e8dd-cd0c-45ee-a960-fc0095bd525b",
+  "id": "293b7b86-6c81-4eae-9888-a42065d01160",
+  "prevId": "4fc6232b-d920-4ded-9b96-16e799b62e44",
   "tables": {
     "bitcoin_addresses": {
       "name": "bitcoin_addresses",
@@ -1052,16 +1052,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "method": {
-          "name": "method",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "exchange_rate": {
-          "name": "exchange_rate",
-          "type": "decimal(20,8)",
+        "method_id": {
+          "name": "method_id",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -1192,6 +1185,15 @@
           "tableFrom": "offers",
           "tableTo": "user",
           "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "offers_method_id_methods_id_fk": {
+          "name": "offers_method_id_methods_id_fk",
+          "tableFrom": "offers",
+          "tableTo": "methods",
+          "columnsFrom": ["method_id"],
           "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -1628,7 +1630,7 @@
     "schemas": {},
     "tables": {},
     "columns": {
-      "\"user\".\"is_banned\"": "\"user\".\"health\""
+      "\"offers\".\"method\"": "\"offers\".\"method_id\""
     }
   },
   "internal": {

@@ -10,7 +10,7 @@ type UserResponse = {
   phone: string | null;
   profile_picture: string | null;
   bio: string | null;
-  is_banned: boolean | null;
+  health: 'active' | 'banned' | 'on_hold' | 'suspended' | 'blocked' | null;
   is_deleted: boolean | null;
   auth_provider: 'local' | 'google';
 };
@@ -26,7 +26,7 @@ export async function serializeUser(user: User): Promise<UserResponse> {
     phone: user.phone,
     profile_picture: user.profile_picture,
     bio: user.bio,
-    is_banned: user.is_banned,
+    health: user.health,
     is_deleted: user.is_deleted,
     auth_provider: user.auth_provider ?? 'local',
   };

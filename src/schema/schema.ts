@@ -123,8 +123,9 @@ export const offersSchema = mysqlTable('offers', {
   terms: text('terms').notNull(),
   instructions: text('instructions').notNull(),
   currency: varchar('currency', { length: 3 }).notNull(),
-  method: varchar('method', { length: 100 }).notNull(),
-  exchange_rate: decimal('exchange_rate', { precision: 20, scale: 8 }).notNull(),
+  method_id: int('method_id')
+    .references(() => methodsSchema.id)
+    .notNull(),
   margin: decimal('margin', { precision: 20, scale: 2 }).notNull(),
   status: mysqlEnum('status', ['active', 'inactive', 'paused']).default('active'),
   active: boolean('active').default(true),
@@ -330,6 +331,10 @@ export const offerRelations = relations(offersSchema, ({ one }) => ({
   user: one(userSchema, {
     fields: [offersSchema.user_id],
     references: [userSchema.id],
+  }),
+  method: one(methodsSchema, {
+    fields: [offersSchema.method_id],
+    references: [methodsSchema.id],
   }),
 }));
 

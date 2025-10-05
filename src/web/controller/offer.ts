@@ -48,7 +48,7 @@ export class OfferController {
       }
 
       const body: CreateOfferBody = await c.req.json();
-      const { label, terms, instructions, currency, method, exchange_rate, margin } = body;
+      const { label, terms, instructions, currency, method_id, margin } = body;
 
       const offerId = await this.offerService.create({
         user_id: user.id,
@@ -56,8 +56,7 @@ export class OfferController {
         terms,
         instructions,
         currency,
-        method,
-        exchange_rate: exchange_rate.toString(),
+        method_id,
         margin: margin.toString(),
         status: 'active',
         active: true,
@@ -136,7 +135,7 @@ export class OfferController {
   public filterOffers = async (c: Context) => {
     try {
       const body: FilterOffersBody = await c.req.json();
-      const { currency, method, status, min_rate, max_rate, user_id, page, limit } = body;
+      const { currency, method_id, status, min_rate, max_rate, user_id, page, limit } = body;
 
       const criteria: FilterOffersBody = {
         page,
@@ -144,7 +143,7 @@ export class OfferController {
       };
 
       if (currency) criteria.currency = currency;
-      if (method) criteria.method = method;
+      if (method_id) criteria.method_id = method_id;
       if (status) criteria.status = status;
       if (min_rate) criteria.min_rate = min_rate;
       if (max_rate) criteria.max_rate = max_rate;
@@ -216,16 +215,12 @@ export class OfferController {
 
       // Convert numbers to strings for decimal fields
       const updateData: Partial<UpdateOfferBody> = { ...body };
-      if (body.exchange_rate !== undefined) {
-        updateData.exchange_rate = Number(body.exchange_rate);
-      }
       if (body.margin !== undefined) {
         updateData.margin = Number(body.margin);
       }
 
       await this.offerService.update(id, {
         ...updateData,
-        exchange_rate: updateData.exchange_rate?.toString(),
         margin: updateData.margin?.toString(),
       });
 
@@ -267,9 +262,6 @@ export class OfferController {
 
       // Convert numbers to strings for decimal fields
       const updateData: any = { ...body };
-      if (body.exchange_rate !== undefined) {
-        updateData.exchange_rate = body.exchange_rate.toString();
-      }
       if (body.margin !== undefined) {
         updateData.margin = body.margin.toString();
       }

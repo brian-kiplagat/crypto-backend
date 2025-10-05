@@ -8,8 +8,7 @@ const createOfferSchema = z.object({
   terms: z.string().min(1),
   instructions: z.string().min(1),
   currency: z.string().length(3),
-  method: z.string().min(1).max(100),
-  exchange_rate: z.number(),
+  method_id: z.number().int().positive(),
   margin: z.number(),
 });
 
@@ -22,8 +21,7 @@ const updateOfferSchema = z.object({
   terms: z.string().min(1).optional(),
   instructions: z.string().min(1).optional(),
   currency: z.string().length(3).optional(),
-  method: z.string().min(1).max(100).optional(),
-  exchange_rate: z.number().positive('Exchange rate must be a positive number').optional(),
+  method_id: z.number().int().positive().optional(),
   margin: z.number().optional(),
   status: z.enum(['active', 'inactive', 'paused']).optional(),
   active: z.boolean().optional(),
@@ -35,7 +33,7 @@ const updateOfferValidator = validator('json', (value, c) => {
 
 const quickEditOfferSchema = z.object({
   label: z.string().min(1).max(255).optional(),
-  exchange_rate: z.number().positive('Exchange rate must be a positive number').optional(),
+  method_id: z.number().int().positive().optional(),
   margin: z.number().optional(),
   status: z.enum(['active', 'inactive', 'paused']).optional(),
 });
@@ -46,7 +44,7 @@ const quickEditOfferValidator = validator('json', (value, c) => {
 
 const filterOffersSchema = z.object({
   currency: z.string().length(3).optional(),
-  method: z.string().optional(),
+  method_id: z.number().int().positive().optional(),
   status: z.enum(['active', 'inactive', 'paused']).optional(),
   min_rate: z.number().optional(),
   max_rate: z.number().optional(),

@@ -46,8 +46,8 @@ export class OfferRepository {
       conditions.push(eq(offersSchema.currency, criteria.currency));
     }
 
-    if (criteria.method) {
-      conditions.push(like(offersSchema.method, `%${criteria.method}%`));
+    if (criteria.method_id) {
+      conditions.push(like(offersSchema.method_id, `%${criteria.method_id}%`));
     }
 
     if (criteria.status) {
@@ -55,11 +55,11 @@ export class OfferRepository {
     }
 
     if (criteria.min_rate !== undefined) {
-      conditions.push(gte(offersSchema.exchange_rate, criteria.min_rate.toString()));
+      conditions.push(gte(offersSchema.margin, criteria.min_rate.toString()));
     }
 
     if (criteria.max_rate !== undefined) {
-      conditions.push(lte(offersSchema.exchange_rate, criteria.max_rate.toString()));
+      conditions.push(lte(offersSchema.margin, criteria.max_rate.toString()));
     }
 
     if (criteria.user_id) {
