@@ -152,20 +152,20 @@ export class TradeController {
       const pricing = this.priceService.calculatePricing(margin, currentBtcPrice, fiat_amount);
       const btcAmountOriginal = this.priceService.convertFiatToBtc(fiat_amount, currentBtcPrice);
 
-      // Ensure seller has sufficient balance to fund escrow and deduct it
-      const sellerBalanceStr = await this.userService.getBalance(offer.user_id);
-      const sellerBalance = parseFloat(sellerBalanceStr || '0');
-      if (sellerBalance < btcAmountOriginal) {
+      const offerType = offer.type === 'buy' ? 'buy' : 'sell';
+      const sellerId = offerType === 'sell' ? offer.user_id : user.id;
+      const buyerId = offerType === 'sell' ? user.id : offer.user_id;
+
+      // escrow from sellerId
+      const funderBalanceStr = await this.userService.getBalance(sellerId);
+      const funderBalance = parseFloat(funderBalanceStr || '0');
+      if (funderBalance < btcAmountOriginal) {
         return serveBadRequest(
           c,
-          `Seller does not have enough BTC to fund escrow. Required: ${btcAmountOriginal.toFixed(8)} BTC, Available: ${sellerBalance.toFixed(8)} BTC`,
+          `Seller has insufficient BTC to fund escrow. Required: ${btcAmountOriginal.toFixed(8)} BTC, Available: ${funderBalance.toFixed(8)} BTC`,
         );
       }
-
-      await this.userService.setBalance(
-        offer.user_id,
-        (sellerBalance - btcAmountOriginal).toFixed(8),
-      );
+      await this.userService.setBalance(sellerId, (funderBalance - btcAmountOriginal).toFixed(8));
 
       // Set expiry time (30 minutes from now)
       const expiryTime = new Date();
@@ -178,8 +178,8 @@ export class TradeController {
         btc_amount_with_margin: pricing.btc_amount_with_margin.toFixed(8).toString(),
         btc_amount_original: btcAmountOriginal.toFixed(8).toString(),
         price: pricing.price.toFixed(2).toString(),
-        buyer: user.id,
-        seller: offer.user_id,
+        buyer: buyerId,
+        seller: sellerId,
         offer_id: offer_id,
         status: 'OPENED',
         expiry_time: expiryTime,

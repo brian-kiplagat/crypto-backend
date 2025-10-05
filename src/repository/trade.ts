@@ -23,7 +23,7 @@ export class TradeRepository {
 
   public async findByRequestId(requestId: string) {
     return db.query.tradesSchema.findFirst({
-      where: eq(tradesSchema.requestId, requestId),
+      where: eq(tradesSchema.request_id, requestId),
       with: {
         offer: true,
         buyerUser: true,

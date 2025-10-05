@@ -119,6 +119,7 @@ export const offersSchema = mysqlTable('offers', {
   user_id: int('user_id')
     .references(() => userSchema.id)
     .notNull(),
+  type: mysqlEnum('type', ['buy', 'sell']).notNull(),
   label: varchar('label', { length: 255 }).notNull(),
   terms: text('terms').notNull(),
   instructions: text('instructions').notNull(),

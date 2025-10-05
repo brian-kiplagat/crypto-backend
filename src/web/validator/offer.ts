@@ -10,6 +10,7 @@ const createOfferSchema = z.object({
   currency: z.string().length(3),
   method_id: z.number().int().positive(),
   margin: z.number(),
+  type: z.enum(['buy', 'sell']),
 });
 
 const createOfferValidator = validator('json', (value, c) => {
