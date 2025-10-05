@@ -8,6 +8,8 @@ const createOfferSchema = z.object({
   terms: z.string().min(1),
   instructions: z.string().min(1),
   currency: z.string().length(3),
+  minimum: z.number(),
+  maximum: z.number(),
   method_id: z.number().int().positive(),
   margin: z.number(),
   type: z.enum(['buy', 'sell']),
@@ -17,16 +19,7 @@ const createOfferValidator = validator('json', (value, c) => {
   return validateSchema(c, createOfferSchema, value);
 });
 
-const updateOfferSchema = z.object({
-  label: z.string().min(1).max(255).optional(),
-  terms: z.string().min(1).optional(),
-  instructions: z.string().min(1).optional(),
-  currency: z.string().length(3).optional(),
-  method_id: z.number().int().positive().optional(),
-  margin: z.number().optional(),
-  status: z.enum(['active', 'inactive', 'paused']).optional(),
-  active: z.boolean().optional(),
-});
+const updateOfferSchema = createOfferSchema.partial();
 
 const updateOfferValidator = validator('json', (value, c) => {
   return validateSchema(c, updateOfferSchema, value);

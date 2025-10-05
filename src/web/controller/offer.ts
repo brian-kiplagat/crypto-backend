@@ -48,11 +48,13 @@ export class OfferController {
       }
 
       const body: CreateOfferBody = await c.req.json();
-      const { margin } = body;
+      const { margin, minimum, maximum } = body;
 
       const offerId = await this.offerService.create({
         ...body,
         user_id: user.id,
+        minimum: minimum.toString(),
+        maximum: maximum.toString(),
         margin: margin.toString(),
         status: 'active',
         active: true,
@@ -191,7 +193,7 @@ export class OfferController {
 
       const id = parseInt(c.req.param('id'));
       const body: UpdateOfferBody = await c.req.json();
-
+      const { minimum, maximum, margin } = body;
       // Check if offer exists and belongs to user
       const existingOffer = await this.offerService.findById(id);
       if (!existingOffer) {
@@ -204,13 +206,12 @@ export class OfferController {
 
       // Convert numbers to strings for decimal fields
       const updateData: Partial<UpdateOfferBody> = { ...body };
-      if (body.margin !== undefined) {
-        updateData.margin = Number(body.margin);
-      }
 
       await this.offerService.update(id, {
         ...updateData,
-        margin: updateData.margin?.toString(),
+        minimum: minimum?.toString(),
+        maximum: maximum?.toString(),
+        margin: margin?.toString(),
       });
 
       return c.json({
