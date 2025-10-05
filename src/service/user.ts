@@ -231,7 +231,7 @@ export class UserService {
         secret: secret.base32,
       };
     } catch (error) {
-      logger.error('Error generating 2FA setup:', error);
+      logger.error(error);
       throw error;
     }
   }
@@ -253,7 +253,7 @@ export class UserService {
         window: this.WINDOW,
       });
     } catch (error) {
-      logger.error('Error verifying 2FA token:', error);
+      logger.error(error);
       return false;
     }
   }
@@ -280,7 +280,7 @@ export class UserService {
       logger.info(`2FA enabled for user ${userId}`);
       return true;
     } catch (error) {
-      logger.error('Error enabling 2FA:', error);
+      logger.error(error);
       return false;
     }
   }
@@ -311,7 +311,7 @@ export class UserService {
       logger.info(`2FA disabled for user ${userId}`);
       return true;
     } catch (error) {
-      logger.error('Error disabling 2FA:', error);
+      logger.error(error);
       return false;
     }
   }
@@ -326,7 +326,7 @@ export class UserService {
       const user = await this.repo.find(userId);
       return user?.two_factor_enabled === true;
     } catch (error) {
-      logger.error('Error checking 2FA status:', error);
+      logger.error(error);
       return false;
     }
   }
