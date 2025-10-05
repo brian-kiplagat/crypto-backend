@@ -21,7 +21,7 @@ export class EmailRepository {
 
   public async findEmailsByHostId(hostId: number) {
     return db.query.emailsSchema.findMany({
-      where: eq(emailsSchema.host_id, hostId),
+      where: eq(emailsSchema.user_id, hostId),
       orderBy: (emails, { desc }) => [desc(emails.created_at)],
     });
   }

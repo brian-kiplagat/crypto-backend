@@ -9,12 +9,14 @@ import { logger } from '../lib/logger.js';
 import { connection } from '../lib/queue.js';
 import { EmailRepository } from '../repository/email.ts';
 import { NotificationRepository } from '../repository/notification.ts';
+import { OfferRepository } from '../repository/offer.ts';
 import { UserRepository } from '../repository/user.js';
 import { WalletRepository } from '../repository/wallet.ts';
 import { BitgoService } from '../service/bitgo.ts';
 import { EmailService } from '../service/email.ts';
 import { GoogleService } from '../service/google.js';
 import { NotificationService } from '../service/notification.ts';
+import { OfferService } from '../service/offer.ts';
 import { UserService } from '../service/user.js';
 import { WalletService } from '../service/wallet.ts';
 import { Tasker } from '../task/tasker.js';
@@ -22,12 +24,21 @@ import { AuthController } from './controller/auth.js';
 import { EmailController } from './controller/email.ts';
 import { GoogleController } from './controller/google.js';
 import { NotificationController } from './controller/notification.ts';
+import { OfferController } from './controller/offer.ts';
 import { ERRORS, serveInternalServerError, serveNotFound } from './controller/resp/error.js';
 import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
 import {
   createNotificationValidator,
   updateNotificationValidator,
 } from './validator/notification.ts';
+import {
+  createOfferValidator,
+  filterOffersValidator,
+  quickEditOfferValidator,
+  toggleAllOffersValidator,
+  toggleOfferValidator,
+  updateOfferValidator,
+} from './validator/offer.ts';
 import {
   emailVerificationValidator,
   inAppResetPasswordValidator,
@@ -75,9 +86,11 @@ export class Server {
     const userRepo = new UserRepository();
     const emailRepo = new EmailRepository();
     const notificationRepo = new NotificationRepository();
+    const offerRepo = new OfferRepository();
     const walletRepo = new WalletRepository();
     // Setup services
     const notificationService = new NotificationService(notificationRepo);
+    const offerService = new OfferService(offerRepo);
 
     const userService = new UserService(userRepo);
     const emailService = new EmailService(emailRepo);
@@ -96,11 +109,13 @@ export class Server {
     const googleController = new GoogleController(googleService, userRepo);
 
     const notificationController = new NotificationController(notificationService, userService);
+    const offerController = new OfferController(offerService, userService);
     // Register routes
     this.registerUserRoutes(api, authController, googleController);
 
     this.registerEmailRoutes(api, emailController);
     this.registerNotificationRoutes(api, notificationController);
+    this.registerOfferRoutes(api, offerController);
   }
 
   private registerUserRoutes(api: Hono, authCtrl: AuthController, googleCtrl: GoogleController) {
@@ -168,6 +183,29 @@ export class Server {
     notification.delete('/all', notificationCtrl.deleteAllNotifications);
 
     api.route('/notification', notification);
+  }
+
+  private registerOfferRoutes(api: Hono, offerCtrl: OfferController) {
+    const offer = new Hono();
+    const authCheck = jwt({ secret: env.SECRET_KEY });
+
+    // Apply auth middleware for all offer routes
+    offer.use(authCheck);
+
+    // Offer routes
+    offer.post('/', createOfferValidator, offerCtrl.createOffer);
+    offer.get('/my', offerCtrl.getMyOffers);
+    offer.get('/active', offerCtrl.getActiveOffers);
+    offer.post('/filter', filterOffersValidator, offerCtrl.filterOffers);
+    offer.get('/:id', offerCtrl.getOffer);
+    offer.put('/:id', updateOfferValidator, offerCtrl.updateOffer);
+    offer.patch('/:id/quick-edit', quickEditOfferValidator, offerCtrl.quickEdit);
+    offer.patch('/:id/toggle', toggleOfferValidator, offerCtrl.toggleOffer);
+    offer.patch('/toggle-all', toggleAllOffersValidator, offerCtrl.toggleAllOffers);
+    offer.delete('/:id', offerCtrl.deleteOffer);
+    offer.delete('/all', offerCtrl.deleteAllOffers);
+
+    api.route('/offer', offer);
   }
 
   private registerWorker(userService: UserService, emailService: EmailService) {

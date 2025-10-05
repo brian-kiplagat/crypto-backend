@@ -76,7 +76,7 @@ class Tasker {
           body: `Your event "${eventName}" stream has ended. All viewers have disconnected from the stream. We have compiled for you a list of all the messages sent during the event.`,
           button_text: 'Download Chat Logs',
           button_link: `${process.env.FRONTEND_URL}/concepts/event/event-edit/${eventId}?action=download-chat-logs`,
-          host_id: hostId,
+          user_id: hostId,
         });
 
         logger.info(`Event end notification sent to host ${hostEmail} for event ${eventId}`);
