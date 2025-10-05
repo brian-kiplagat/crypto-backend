@@ -36,6 +36,8 @@ export const userSchema = mysqlTable('user', {
   balance: decimal('balance', { precision: 20, scale: 8 }).default('0.00000000'),
   google_access_token: varchar('google_access_token', { length: 255 }),
   auth_provider: mysqlEnum('auth_provider', ['local', 'google']).default('local'),
+  two_factor_secret: varchar('two_factor_secret', { length: 255 }),
+  two_factor_enabled: boolean('two_factor_enabled').default(false),
 });
 
 export const notificationsSchema = mysqlTable('notifications', {

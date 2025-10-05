@@ -1,3 +1,6 @@
+import QRCode from 'qrcode';
+import speakeasy from 'speakeasy';
+
 import { encrypt } from '../lib/encryption.ts';
 import env from '../lib/env.ts';
 import { logger } from '../lib/logger.ts';
@@ -11,6 +14,10 @@ import { capitalizeFirst, shuffleString } from '../util/string.js';
  */
 export class UserService {
   private repo: UserRepository;
+  // 2FA Methods
+  private readonly DIGITS = 6;
+  private readonly STEP = 30; // seconds
+  private readonly WINDOW = 1; // tolerance
 
   /**
    * Creates an instance of UserService
@@ -198,5 +205,129 @@ export class UserService {
   public async checkUsernameExists(username: string): Promise<boolean> {
     const user = await this.repo.findByCustomId(username);
     return user !== undefined;
+  }
+
+  /**
+   * Generates 2FA setup for a user
+   * @param {string} userEmail - User's email address
+   * @param {string} issuer - Application name/issuer
+   * @returns {Promise<{qrCode: string, secret: string}>} 2FA setup data
+   */
+  public async generate2FaSetup(
+    userEmail: string,
+    issuer: string = env.BRAND_NAME,
+  ): Promise<{ qrCode: string; secret: string }> {
+    try {
+      const secret = speakeasy.generateSecret({
+        name: `${issuer}:${userEmail}`,
+        length: 20,
+      });
+
+      const otpauth = secret.otpauth_url!;
+      const qrCode = await QRCode.toDataURL(otpauth);
+
+      return {
+        qrCode,
+        secret: secret.base32,
+      };
+    } catch (error) {
+      logger.error('Error generating 2FA setup:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Verifies a 2FA token
+   * @param {string} secret - User's 2FA secret
+   * @param {string} token - Token to verify
+   * @returns {boolean} True if token is valid
+   */
+  public verify2Fa(secret: string, token: string): boolean {
+    try {
+      return speakeasy.totp.verify({
+        secret,
+        encoding: 'base32',
+        token,
+        digits: this.DIGITS,
+        step: this.STEP,
+        window: this.WINDOW,
+      });
+    } catch (error) {
+      logger.error('Error verifying 2FA token:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Enables 2FA for a user
+   * @param {number} userId - User ID
+   * @param {string} secret - 2FA secret
+   * @param {string} token - Verification token
+   * @returns {Promise<boolean>} True if 2FA was enabled successfully
+   */
+  public async enable2Fa(userId: number, secret: string, token: string): Promise<boolean> {
+    try {
+      if (!this.verify2Fa(secret, token)) {
+        return false;
+      }
+
+      // Update user with 2FA secret (you'll need to add this field to your schema)
+      await this.repo.update(userId, {
+        two_factor_secret: secret,
+        two_factor_enabled: true,
+      });
+
+      logger.info(`2FA enabled for user ${userId}`);
+      return true;
+    } catch (error) {
+      logger.error('Error enabling 2FA:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Disables 2FA for a user
+   * @param {number} userId - User ID
+   * @param {string} token - Current 2FA token for verification
+   * @returns {Promise<boolean>} True if 2FA was disabled successfully
+   */
+  public async disable2Fa(userId: number, token: string): Promise<boolean> {
+    try {
+      const user = await this.repo.find(userId);
+      if (!user || !user.two_factor_secret) {
+        return false;
+      }
+
+      if (!this.verify2Fa(user.two_factor_secret, token)) {
+        return false;
+      }
+
+      // Remove 2FA secret and disable
+      await this.repo.update(userId, {
+        two_factor_secret: null,
+        two_factor_enabled: false,
+      });
+
+      logger.info(`2FA disabled for user ${userId}`);
+      return true;
+    } catch (error) {
+      logger.error('Error disabling 2FA:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Checks if user has 2FA enabled
+   * @param {number} userId - User ID
+   * @returns {Promise<boolean>} True if 2FA is enabled
+   */
+  public async is2FaEnabled(userId: number): Promise<boolean> {
+    try {
+      const user = await this.repo.find(userId);
+      return user?.two_factor_enabled === true;
+    } catch (error) {
+      logger.error('Error checking 2FA status:', error);
+      return false;
+    }
   }
 }
