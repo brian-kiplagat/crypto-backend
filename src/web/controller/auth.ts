@@ -329,7 +329,18 @@ export class AuthController {
     const wallet = await this.walletService.findByUserId(user.id);
 
     const serializedUser = await serializeUser(user);
-    return c.json({ user: serializedUser, wallet });
+    return c.json({
+      user: serializedUser,
+      wallet: {
+        id: wallet[0].id,
+        address: wallet[0].address,
+        user_id: wallet[0].user_id,
+        address_type: wallet[0].address_type,
+        chain: wallet[0].chain,
+        index: wallet[0].index,
+        createdAt: wallet[0].created_at,
+      },
+    });
   };
 
   /**
