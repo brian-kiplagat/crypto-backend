@@ -10,6 +10,7 @@ import { logger } from '../../lib/logger.ts';
 import { userSchema } from '../../schema/schema.ts';
 import { BitgoService } from '../../service/bitgo.ts';
 import type { UserService } from '../../service/user.js';
+import { WalletService } from '../../service/wallet.ts';
 import sendWelcomeEmailAsync from '../../task/client/sendWelcomeEmailAsync.js';
 import { sendTransactionalEmail } from '../../task/email-processor.ts';
 import type {
@@ -23,9 +24,7 @@ import type {
   UpdateUserDetailsBody,
 } from '../validator/user.js';
 import { ERRORS, MAIL_CONTENT, serveBadRequest, serveInternalServerError } from './resp/error.js';
-import { serveData } from './resp/resp.js';
 import { serializeUser } from './serializer/user.js';
-import { WalletService } from '../../service/wallet.ts';
 
 export class AuthController {
   private service: UserService;
@@ -72,7 +71,7 @@ export class AuthController {
 
       const token = await encode(user.id, user.email);
       const serializedUser = await serializeUser(user);
-      return serveData(c, { token, user: serializedUser });
+      return c.json({ token, user: serializedUser });
     } catch (err) {
       logger.error(err);
       return serveInternalServerError(c, err);
@@ -110,7 +109,7 @@ export class AuthController {
 
       const token = await encode(user.id, user.email);
       const serializedUser = await serializeUser(user);
-      return serveData(c, { token, user: serializedUser });
+      return c.json({ token, user: serializedUser });
     } catch (err) {
       return serveInternalServerError(c, err);
     }
@@ -149,8 +148,7 @@ export class AuthController {
         buttonLink: `${env.FRONTEND_URL}`,
       });
 
-      return serveData(c, {
-        success: true,
+      return c.json({
         message: 'Email token sent successfully',
       });
     } catch (err) {
@@ -190,8 +188,7 @@ export class AuthController {
         );
       }
       await this.service.update(user.id, { is_verified: true });
-      return serveData(c, {
-        success: true,
+      return c.json({
         message: 'Email verified successfully',
       });
     } catch (err) {
@@ -223,8 +220,7 @@ export class AuthController {
         buttonText: 'Reset password',
         buttonLink: `${env.FRONTEND_URL}/reset-password?token=${token}&email=${user.email}`,
       });
-      return serveData(c, {
-        success: true,
+      return c.json({
         message: 'Reset password link sent successfully',
       });
     } catch (err) {
@@ -272,8 +268,7 @@ export class AuthController {
         buttonText: 'Ok, got it',
         buttonLink: `${env.FRONTEND_URL}`,
       });
-      return serveData(c, {
-        success: true,
+      return c.json({
         message: 'Password reset successfully',
       });
     } catch (err) {
@@ -309,8 +304,7 @@ export class AuthController {
       // Send confirmation email
       await sendTransactionalEmail(user.email, user.name, 12, MAIL_CONTENT.PASSWORD_CHANGED_IN_APP);
 
-      return serveData(c, {
-        success: true,
+      return c.json({
         message: 'Password changed successfully',
       });
     } catch (error) {
@@ -335,7 +329,7 @@ export class AuthController {
     const wallet = await this.walletService.findByUserId(user.id);
 
     const serializedUser = await serializeUser(user);
-    return serveData(c, { user: serializedUser, wallet });
+    return c.json({ user: serializedUser, wallet });
   };
 
   /**
@@ -360,35 +354,6 @@ export class AuthController {
           return serveBadRequest(c, ERRORS.USER_EXISTS);
         }
       }
-
-      /*//if updating the profile image, check if the image is valid
-      if (body.imageBase64 && body.fileName) {
-        const { imageBase64, fileName } = body;
-
-        // Convert base64 to buffer
-        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
-        const buffer = Buffer.from(base64Data, 'base64');
-
-        // Create asset using AssetService
-        const { asset: assetId } = await this.assetService.createAsset(
-          user.id,
-          fileName.replace(/[^\w.-]/g, ''),
-          getContentType(imageBase64),
-          'profile_picture',
-          buffer.length,
-          0,
-          buffer,
-        );
-
-        // Get the full asset object to access the URL
-        const asset = await this.assetService.getAsset(assetId);
-        if (!asset || !asset.asset_url) {
-          return serveInternalServerError(c, new Error('Failed to get asset URL'));
-        }
-
-        // Update user profile image with the asset URL
-        await this.service.updateProfileImage(user.id, asset.asset_url);
-      }*/
       const { name, email, dial_code, phone } = body;
 
       // Update user details
@@ -401,8 +366,7 @@ export class AuthController {
       }
 
       const serializedUser = await serializeUser(updatedUser);
-      return serveData(c, {
-        success: true,
+      return c.json({
         message: 'User details updated successfully',
         user: serializedUser,
       });

@@ -4,6 +4,7 @@ type UserResponse = {
   id: number;
   email: string;
   name: string;
+  username: string | null;
   createdAt: Date | null;
   is_verified: boolean | null;
   role: string | null;
@@ -20,6 +21,7 @@ export async function serializeUser(user: User): Promise<UserResponse> {
     id: user.id,
     email: user.email,
     name: user.name,
+    username: user.username,
     createdAt: user.createdAt,
     is_verified: user.is_verified,
     role: user.role,
