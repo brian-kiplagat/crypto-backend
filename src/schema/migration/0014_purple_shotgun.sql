@@ -1,0 +1,1 @@
+ALTER TABLE `user` RENAME COLUMN `custom_id` TO `username`;

@@ -26,7 +26,7 @@ export const userSchema = mysqlTable('user', {
   role: mysqlEnum('role', ['user', 'role', 'admin']).default('user'),
   profile_picture: text('profile_picture'),
   bio: varchar('bio', { length: 255 }),
-  custom_id: varchar('custom_id', { length: 255 }),
+  username: varchar('username', { length: 255 }),
   is_verified: boolean('is_verified').default(false),
   health: mysqlEnum('health', ['active', 'banned', 'on_hold', 'suspended', 'blocked']).default(
     'active',

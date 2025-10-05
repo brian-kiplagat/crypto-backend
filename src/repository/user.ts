@@ -57,7 +57,7 @@ export class UserRepository {
 
   public async findByCustomId(customId: string) {
     return db.query.userSchema.findFirst({
-      where: eq(userSchema.custom_id, customId),
+      where: eq(userSchema.username, customId),
     });
   }
 }

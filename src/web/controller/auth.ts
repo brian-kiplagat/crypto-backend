@@ -94,10 +94,7 @@ export class AuthController {
       if (existingUser) {
         return serveBadRequest(c, ERRORS.USER_EXISTS);
       }
-      const username = await this.service.generateUserName();
-      await this.service.create(name, email, password, 'user', fullNumber, {
-        custom_id: username,
-      });
+      await this.service.create(name, email, password, 'user', fullNumber);
 
       const user = await this.service.findByEmail(email);
       if (!user) {

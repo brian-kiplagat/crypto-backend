@@ -44,8 +44,8 @@ export class UserService {
     try {
       const hashedPassword = encrypt(password);
 
-      // Generate a unique username if not provided
-      const username = additionalFields.custom_id || (await this.generateUserName());
+      // Generate a unique username
+      const username = await this.generateUserName();
 
       // Create user with all fields
       const user = await this.repo.create({
@@ -55,7 +55,7 @@ export class UserService {
         role,
         phone,
         auth_provider: 'local',
-        custom_id: username,
+        username: username,
         ...additionalFields,
       });
 
