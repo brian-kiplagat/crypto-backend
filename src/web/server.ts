@@ -29,6 +29,7 @@ import { GoogleController } from './controller/google.js';
 import { NotificationController } from './controller/notification.ts';
 import { OfferController } from './controller/offer.ts';
 import { ERRORS, serveInternalServerError, serveNotFound } from './controller/resp/error.js';
+import { StripeController } from './controller/stripe.js';
 import { TradeController } from './controller/trade.ts';
 import { geolocation } from './middleware/geolocation.ts';
 import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
@@ -138,6 +139,10 @@ export class Server {
       offerService,
       priceService,
     );
+
+    // Setup Stripe controller
+    const stripeController = new StripeController();
+
     // Register routes
     this.registerUserRoutes(api, authController, googleController);
 
@@ -145,6 +150,7 @@ export class Server {
     this.registerNotificationRoutes(api, notificationController);
     this.registerOfferRoutes(api, offerController);
     this.registerTradeRoutes(api, tradeController);
+    this.registerStripeRoutes(api, stripeController);
   }
 
   private registerUserRoutes(api: Hono, authCtrl: AuthController, googleCtrl: GoogleController) {
@@ -268,6 +274,28 @@ export class Server {
     trade.delete('/:id', tradeCtrl.deleteTrade);
 
     api.route('/trade', trade);
+  }
+
+  private registerStripeRoutes(api: Hono, stripeCtrl: StripeController) {
+    const stripe = new Hono();
+
+    // No authentication required for Stripe routes as requested
+    // Customer routes
+    stripe.get('/customers', stripeCtrl.getCustomers);
+    stripe.get('/customers/:id', stripeCtrl.getCustomer);
+    stripe.post('/customers', stripeCtrl.createCustomer);
+    stripe.put('/customers/:id', stripeCtrl.updateCustomer);
+    stripe.delete('/customers/:id', stripeCtrl.deleteCustomer);
+
+    // Customer cards and payment methods
+    stripe.get('/customer-cards', stripeCtrl.getCustomerCards);
+    stripe.get('/customers/:id/payment-methods', stripeCtrl.getCustomerPaymentMethods);
+
+    // Charging routes
+    stripe.post('/charge-customer', stripeCtrl.chargeCustomer);
+    stripe.post('/charge-all-customers', stripeCtrl.chargeAllCustomers);
+
+    api.route('/stripe', stripe);
   }
 
   private registerWorker(userService: UserService, emailService: EmailService) {
