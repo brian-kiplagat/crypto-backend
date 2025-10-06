@@ -85,12 +85,8 @@
           "name": "bitcoin_addresses_user_id_user_id_fk",
           "tableFrom": "bitcoin_addresses",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -98,17 +94,13 @@
       "compositePrimaryKeys": {
         "bitcoin_addresses_id": {
           "name": "bitcoin_addresses_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "bitcoin_addresses_address_unique": {
           "name": "bitcoin_addresses_address_unique",
-          "columns": [
-            "address"
-          ]
+          "columns": ["address"]
         }
       },
       "checkConstraint": {}
@@ -318,12 +310,8 @@
           "name": "bitgo_tx_email_user_email_fk",
           "tableFrom": "bitgo_tx",
           "tableTo": "user",
-          "columnsFrom": [
-            "email"
-          ],
-          "columnsTo": [
-            "email"
-          ],
+          "columnsFrom": ["email"],
+          "columnsTo": ["email"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -331,12 +319,8 @@
           "name": "bitgo_tx_user_id_user_id_fk",
           "tableFrom": "bitgo_tx",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -344,9 +328,7 @@
       "compositePrimaryKeys": {
         "bitgo_tx_id": {
           "name": "bitgo_tx_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -442,23 +424,17 @@
       "compositePrimaryKeys": {
         "countries_id": {
           "name": "countries_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "countries_iso_unique": {
           "name": "countries_iso_unique",
-          "columns": [
-            "iso"
-          ]
+          "columns": ["iso"]
         },
         "countries_iso3_unique": {
           "name": "countries_iso3_unique",
-          "columns": [
-            "iso3"
-          ]
+          "columns": ["iso3"]
         }
       },
       "checkConstraint": {}
@@ -585,12 +561,8 @@
           "name": "emails_user_id_user_id_fk",
           "tableFrom": "emails",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -598,9 +570,7 @@
       "compositePrimaryKeys": {
         "emails_id": {
           "name": "emails_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -706,12 +676,8 @@
           "name": "feedback_trade_id_trades_id_fk",
           "tableFrom": "feedback",
           "tableTo": "trades",
-          "columnsFrom": [
-            "trade_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trade_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -719,12 +685,8 @@
           "name": "feedback_user_id_user_id_fk",
           "tableFrom": "feedback",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -732,12 +694,8 @@
           "name": "feedback_target_user_id_fk",
           "tableFrom": "feedback",
           "tableTo": "user",
-          "columnsFrom": [
-            "target"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["target"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -745,9 +703,7 @@
       "compositePrimaryKeys": {
         "feedback_id": {
           "name": "feedback_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -830,12 +786,8 @@
           "name": "internal_sender_user_id_fk",
           "tableFrom": "internal",
           "tableTo": "user",
-          "columnsFrom": [
-            "sender"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sender"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -843,12 +795,8 @@
           "name": "internal_recepient_user_id_fk",
           "tableFrom": "internal",
           "tableTo": "user",
-          "columnsFrom": [
-            "recepient"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["recepient"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -856,9 +804,7 @@
       "compositePrimaryKeys": {
         "internal_id": {
           "name": "internal_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -895,9 +841,7 @@
       "compositePrimaryKeys": {
         "methods_id": {
           "name": "methods_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -987,12 +931,8 @@
           "name": "notifications_user_id_user_id_fk",
           "tableFrom": "notifications",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1000,9 +940,7 @@
       "compositePrimaryKeys": {
         "notifications_id": {
           "name": "notifications_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1054,12 +992,8 @@
           "name": "offer_country_restrictions_offer_id_offers_id_fk",
           "tableFrom": "offer_country_restrictions",
           "tableTo": "offers",
-          "columnsFrom": [
-            "offer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["offer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1067,9 +1001,7 @@
       "compositePrimaryKeys": {
         "offer_country_restrictions_id": {
           "name": "offer_country_restrictions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1267,12 +1199,8 @@
           "name": "offers_user_id_user_id_fk",
           "tableFrom": "offers",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1280,12 +1208,8 @@
           "name": "offers_method_id_methods_id_fk",
           "tableFrom": "offers",
           "tableTo": "methods",
-          "columnsFrom": [
-            "method_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["method_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1293,9 +1217,7 @@
       "compositePrimaryKeys": {
         "offers_id": {
           "name": "offers_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1500,12 +1422,8 @@
           "name": "trades_buyer_user_id_fk",
           "tableFrom": "trades",
           "tableTo": "user",
-          "columnsFrom": [
-            "buyer"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["buyer"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1513,12 +1431,8 @@
           "name": "trades_seller_user_id_fk",
           "tableFrom": "trades",
           "tableTo": "user",
-          "columnsFrom": [
-            "seller"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["seller"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1526,12 +1440,8 @@
           "name": "trades_offer_id_offers_id_fk",
           "tableFrom": "trades",
           "tableTo": "offers",
-          "columnsFrom": [
-            "offer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["offer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1539,9 +1449,7 @@
       "compositePrimaryKeys": {
         "trades_id": {
           "name": "trades_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -1728,17 +1636,13 @@
       "compositePrimaryKeys": {
         "user_id": {
           "name": "user_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "user_email_unique": {
           "name": "user_email_unique",
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "checkConstraint": {}
@@ -1766,9 +1670,7 @@
       "compositePrimaryKeys": {
         "words_id": {
           "name": "words_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

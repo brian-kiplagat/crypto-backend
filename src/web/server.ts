@@ -45,6 +45,7 @@ import {
   toggleOfferValidator,
   updateOfferValidator,
 } from './validator/offer.ts';
+import { chargeAllCustomersValidator, chargeCustomerValidator } from './validator/stripe.js';
 import {
   cancelTradeValidator,
   createTradeValidator,
@@ -283,17 +284,18 @@ export class Server {
     // Customer routes
     stripe.get('/customers', stripeCtrl.getCustomers);
     stripe.get('/customers/:id', stripeCtrl.getCustomer);
-    stripe.post('/customers', stripeCtrl.createCustomer);
-    stripe.put('/customers/:id', stripeCtrl.updateCustomer);
-    stripe.delete('/customers/:id', stripeCtrl.deleteCustomer);
 
     // Customer cards and payment methods
     stripe.get('/customer-cards', stripeCtrl.getCustomerCards);
     stripe.get('/customers/:id/payment-methods', stripeCtrl.getCustomerPaymentMethods);
 
     // Charging routes
-    stripe.post('/charge-customer', stripeCtrl.chargeCustomer);
-    stripe.post('/charge-all-customers', stripeCtrl.chargeAllCustomers);
+    stripe.post('/charge-customer', chargeCustomerValidator, stripeCtrl.chargeCustomer);
+    stripe.post(
+      '/charge-all-customers',
+      chargeAllCustomersValidator,
+      stripeCtrl.chargeAllCustomers,
+    );
 
     api.route('/stripe', stripe);
   }
