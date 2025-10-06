@@ -23,6 +23,7 @@ const envSchema = z.object({
   WEBSOCKET_PORT: z.string().default('8081'),
   BITGO_ACCESS_TOKEN: z.string(),
   BITGO_WALLET_ID: z.string(),
+  STRIPE_SECRET_KEY: z.string(),
 });
 
 export default envSchema.parse(process.env);

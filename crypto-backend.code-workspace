@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../escrow_btc_laravel"
+		}
+	],
+	"settings": {}
+}
