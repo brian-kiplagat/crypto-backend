@@ -44,7 +44,7 @@ export class TwitterController {
         tokenSecret,
       });
     } catch (error) {
-      logger.error('Failed to initiate Twitter auth:', error);
+      logger.error( error);
       return serveBadRequest(c, 'Failed to initiate Twitter authentication');
     }
   };
@@ -83,7 +83,7 @@ export class TwitterController {
         accessTokenSecret,
       });
     } catch (error) {
-      logger.error('Twitter callback failed:', error);
+      logger.error(error);
       return serveBadRequest(c, 'Failed to complete Twitter authentication');
     }
   };
