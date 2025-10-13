@@ -33,6 +33,7 @@
     "ioredis": "^5.4.2",
     "libphonenumber-js": "^1.12.6",
     "mysql2": "^3.12.0",
+    "oauth": "^0.10.2",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
     "qrcode": "^1.5.4",
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/node": "^22.10.10",
+    "@types/oauth": "^0.9.6",
     "@types/qrcode": "^1.5.5",
     "@types/speakeasy": "^2.0.10",
     "@types/ws": "^8.5.13",

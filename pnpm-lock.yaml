@@ -71,6 +71,9 @@ importers:
       mysql2:
         specifier: ^3.12.0
         version: 3.12.0
+      oauth:
+        specifier: ^0.10.2
+        version: 0.10.2
       pino:
         specifier: ^9.6.0
         version: 9.6.0
@@ -102,6 +105,9 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@types/oauth':
+        specifier: ^0.9.6
+        version: 0.9.6
       '@types/qrcode':
         specifier: ^1.5.5
         version: 1.5.5
@@ -1192,6 +1198,9 @@ packages:
 
   '@types/node@22.10.10':
     resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
+
+  '@types/oauth@0.9.6':
+    resolution: {integrity: sha512-H9TRCVKBNOhZZmyHLqFt9drPM9l+ShWiqqJijU1B8P3DX3ub84NjxDuy+Hjrz+fEca5Kwip3qPMKNyiLgNJtIA==}
 
   '@types/pbkdf2@3.1.2':
     resolution: {integrity: sha512-uRwJqmiXmh9++aSu1VNEn3iIxWOhd8AHXNSdlaLfdAAdSTY9jYVeGWnzejM3dvrkbqE3/hyQkQQ29IFATEGlew==}
@@ -2568,6 +2577,9 @@ packages:
 
   oauth-sign@0.9.0:
     resolution: {integrity: sha512-fexhUFFPTGV8ybAtSIGbV6gOkSv8UtRbDBnAyLQw4QPKkgNlsH2ByPGtMUqdWkos6YCRmAqViwgZrJc/mRDzZQ==}
+
+  oauth@0.10.2:
+    resolution: {integrity: sha512-JtFnB+8nxDEXgNyniwz573xxbKSOu3R8D40xQKqcjwJ2CDkYqUDI53o6IuzDJBx60Z8VKCm271+t8iFjakrl8Q==}
 
   object-inspect@1.13.4:
     resolution: {integrity: sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==}
@@ -4536,6 +4548,10 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
+  '@types/oauth@0.9.6':
+    dependencies:
+      '@types/node': 22.10.10
+
   '@types/pbkdf2@3.1.2':
     dependencies:
       '@types/node': 22.10.10
@@ -6019,6 +6035,8 @@ snapshots:
   normalize-path@3.0.0: {}
 
   oauth-sign@0.9.0: {}
+
+  oauth@0.10.2: {}
 
   object-inspect@1.13.4: {}
 

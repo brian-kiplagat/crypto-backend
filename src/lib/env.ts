@@ -24,6 +24,9 @@ const envSchema = z.object({
   BITGO_ACCESS_TOKEN: z.string(),
   BITGO_WALLET_ID: z.string(),
   STRIPE_SECRET_KEY: z.string(),
+  TWITTER_CONSUMER_KEY: z.string(),
+  TWITTER_CONSUMER_SECRET: z.string(),
+  TWITTER_CALLBACK_URL: z.string(),
 });
 
 export default envSchema.parse(process.env);
