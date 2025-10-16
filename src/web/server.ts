@@ -310,8 +310,8 @@ export class Server {
     // Public endpoints for demo; secure as needed
     voice.get('/token', voiceCtrl.getToken);
     voice.post('/call', createCallValidator, voiceCtrl.createCall);
-    voice.post('/response', voiceCtrl.voiceResponse);
-
+    voice.get('/response', voiceCtrl.voiceResponse);
+  
     api.route('/voice', voice);
   }
 
