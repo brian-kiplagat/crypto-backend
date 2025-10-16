@@ -30,6 +30,13 @@ const envSchema = z.object({
   TWITTER_CLIENT_ID: z.string(),
   TWITTER_CLIENT_SECRET: z.string(),
   TWITTER_REDIRECT_URL: z.string(),
+  // Twilio Voice/WebRTC
+  TWILIO_ACCOUNT_SID: z.string().optional(),
+  TWILIO_AUTH_TOKEN: z.string().optional(),
+  TWILIO_API_KEY: z.string().optional(),
+  TWILIO_API_SECRET: z.string().optional(),
+  TWILIO_PHONE_NUMBER: z.string().optional(),
+  TWIML_APP_SID: z.string().optional(),
 });
 
 export default envSchema.parse(process.env);

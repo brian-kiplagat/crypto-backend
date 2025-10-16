@@ -32,6 +32,7 @@ import { ERRORS, serveInternalServerError, serveNotFound } from './controller/re
 import { StripeController } from './controller/stripe.js';
 import { TradeController } from './controller/trade.ts';
 import { TwitterController } from './controller/twitter.ts';
+import { VoiceController } from './controller/voice.js';
 import { geolocation } from './middleware/geolocation.ts';
 import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
 import {
@@ -71,6 +72,7 @@ import {
   updateUserDetailsValidator,
   verify2FaValidator,
 } from './validator/user.js';
+import { createCallValidator } from './validator/voice.js';
 
 export class Server {
   private app: Hono;
@@ -147,6 +149,7 @@ export class Server {
 
     // Setup Stripe controller
     const stripeController = new StripeController();
+    const voiceController = new VoiceController();
 
     // Register routes
     this.registerUserRoutes(api, authController, googleController);
@@ -157,6 +160,7 @@ export class Server {
     this.registerOfferRoutes(api, offerController);
     this.registerTradeRoutes(api, tradeController);
     this.registerStripeRoutes(api, stripeController);
+    this.registerVoiceRoutes(api, voiceController);
   }
 
   private registerUserRoutes(api: Hono, authCtrl: AuthController, googleCtrl: GoogleController) {
@@ -313,6 +317,17 @@ export class Server {
     twitter.get('/callback', twitterCtrl.handleCallback);
 
     api.route('/twitter', twitter);
+  }
+
+  private registerVoiceRoutes(api: Hono, voiceCtrl: VoiceController) {
+    const voice = new Hono();
+
+    // Public endpoints for demo; secure as needed
+    voice.get('/token', voiceCtrl.getToken);
+    voice.post('/call', createCallValidator, voiceCtrl.createCall);
+    voice.post('/response', voiceCtrl.voiceResponse);
+
+    api.route('/voice', voice);
   }
 
   private registerWorker(userService: UserService, emailService: EmailService) {

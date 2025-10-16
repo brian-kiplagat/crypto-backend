@@ -16,6 +16,7 @@
     "@bitgo/sdk-api": "^1.69.2",
     "@bitgo/sdk-coin-btc": "^2.9.1",
     "@getbrevo/brevo": "^2.2.0",
+    "@google-analytics/data": "^5.2.1",
     "@hono/node-server": "^1.13.7",
     "@hono/swagger-ui": "^0.5.0",
     "@hono/zod-validator": "^0.4.2",
@@ -39,6 +40,7 @@
     "qrcode": "^1.5.4",
     "speakeasy": "^2.0.0",
     "stripe": "^19.1.0",
+    "twilio": "^5.10.3",
     "uuid": "^11.1.0",
     "ws": "^8.18.0",
     "zod": "^3.24.1"

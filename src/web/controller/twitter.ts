@@ -44,7 +44,7 @@ export class TwitterController {
         tokenSecret,
       });
     } catch (error) {
-      logger.error( error);
+      logger.error(error);
       return serveBadRequest(c, 'Failed to initiate Twitter authentication');
     }
   };
