@@ -68,9 +68,10 @@ export class VoiceController {
       const dial = twiml.dial();
       // Bridge to client (web user)
       dial.client('website_user');
-
+      const twimlResponse = twiml.toString();
+      logger.info(twimlResponse);
       c.header('Content-Type', 'text/xml');
-      return c.body(twiml.toString());
+      return c.body(twimlResponse);
     } catch (error) {
       logger.error('Failed to serve TwiML', { error });
       return c.json({ error: 'Failed to serve TwiML' }, 500);
