@@ -24,13 +24,6 @@ const envSchema = z.object({
   BITGO_ACCESS_TOKEN: z.string(),
   BITGO_WALLET_ID: z.string(),
   STRIPE_SECRET_KEY: z.string(),
-  TWITTER_CONSUMER_KEY: z.string(),
-  TWITTER_CONSUMER_SECRET: z.string(),
-  TWITTER_CALLBACK_URL: z.string(),
-  TWITTER_CLIENT_ID: z.string(),
-  TWITTER_CLIENT_SECRET: z.string(),
-  TWITTER_REDIRECT_URL: z.string(),
-  // Twilio Voice/WebRTC
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
   TWILIO_API_KEY: z.string().optional(),

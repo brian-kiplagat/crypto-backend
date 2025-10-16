@@ -31,7 +31,6 @@ import { OfferController } from './controller/offer.ts';
 import { ERRORS, serveInternalServerError, serveNotFound } from './controller/resp/error.js';
 import { StripeController } from './controller/stripe.js';
 import { TradeController } from './controller/trade.ts';
-import { TwitterController } from './controller/twitter.ts';
 import { VoiceController } from './controller/voice.js';
 import { geolocation } from './middleware/geolocation.ts';
 import { toggleBulkEmailValidator, updateBulkEmailValidator } from './validator/email.ts';
@@ -135,9 +134,6 @@ export class Server {
     const googleService = new GoogleService(userService, bitgoService);
     const googleController = new GoogleController(googleService, userRepo);
 
-    // Add Twitter controller
-    const twitterController = new TwitterController();
-
     const notificationController = new NotificationController(notificationService, userService);
     const offerController = new OfferController(offerService, userService);
     const tradeController = new TradeController(
@@ -153,7 +149,6 @@ export class Server {
 
     // Register routes
     this.registerUserRoutes(api, authController, googleController);
-    this.registerTwitterRoutes(api, twitterController);
 
     this.registerEmailRoutes(api, emailController);
     this.registerNotificationRoutes(api, notificationController);
@@ -307,16 +302,6 @@ export class Server {
     );
 
     api.route('/stripe', stripe);
-  }
-
-  private registerTwitterRoutes(api: Hono, twitterCtrl: TwitterController) {
-    const twitter = new Hono();
-
-    // Twitter OAuth routes
-    twitter.get('/auth', twitterCtrl.initiateAuth);
-    twitter.get('/callback', twitterCtrl.handleCallback);
-
-    api.route('/twitter', twitter);
   }
 
   private registerVoiceRoutes(api: Hono, voiceCtrl: VoiceController) {
