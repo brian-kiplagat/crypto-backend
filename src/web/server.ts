@@ -311,7 +311,7 @@ export class Server {
     voice.get('/token', voiceCtrl.getToken);
     voice.post('/call', createCallValidator, voiceCtrl.createCall);
     voice.get('/response', voiceCtrl.voiceResponse);
-  
+
     api.route('/voice', voice);
   }
 
