@@ -84,7 +84,9 @@ export class VoiceController {
             const twiml = new twilio.twiml.VoiceResponse();
 
             if (to) {
-                const dial = twiml.dial();
+                const dial = twiml.dial({
+                    callerId: env.TWILIO_PHONE_NUMBER
+                });
                 dial.number(to); // Call the actual phone number
             } else {
                 twiml.say('No number provided');
