@@ -77,4 +77,26 @@ export class VoiceController {
             return c.json({ error: 'Failed to serve TwiML' }, 500);
         }
     };
+
+    public directCallResponse = async (c: Context) => {
+        try {
+            const to = c.req.query('To');
+            const twiml = new twilio.twiml.VoiceResponse();
+
+            if (to) {
+                const dial = twiml.dial();
+                dial.number(to); // Call the actual phone number
+            } else {
+                twiml.say('No number provided');
+            }
+
+            const twimlResponse = twiml.toString();
+            logger.info('Direct call TwiML:', twimlResponse);
+            c.header('Content-Type', 'text/xml');
+            return c.body(twimlResponse);
+        } catch (error) {
+            logger.error('Failed to serve direct call TwiML', { error });
+            return c.json({ error: 'Failed to serve TwiML' }, 500);
+        }
+    };
 }
