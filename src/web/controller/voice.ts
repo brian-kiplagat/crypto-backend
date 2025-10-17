@@ -91,7 +91,7 @@ export class VoiceController {
             }
 
             const twimlResponse = twiml.toString();
-            logger.info('Direct call TwiML:', twimlResponse);
+            logger.info(twimlResponse);
             c.header('Content-Type', 'text/xml');
             return c.body(twimlResponse);
         } catch (error) {
