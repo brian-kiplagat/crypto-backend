@@ -76,7 +76,7 @@ export class VoiceController {
       c.header('Content-Type', 'text/xml');
       return c.body(twimlResponse);
     } catch (error) {
-      logger.error('Failed to serve TwiML', { error });
+      logger.error(error);
       return c.json({ error: 'Failed to serve TwiML' }, 500);
     }
   };
