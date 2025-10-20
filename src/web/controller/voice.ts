@@ -57,7 +57,7 @@ export class VoiceController {
 
       return c.json({ success: true, call_sid: call.sid });
     } catch (error) {
-      logger.error('Failed to create call', { error });
+      logger.error(error);
       return c.json({ error: 'Failed to create call' }, 500);
     }
   };
@@ -100,7 +100,7 @@ export class VoiceController {
       c.header('Content-Type', 'text/xml');
       return c.body(twimlResponse);
     } catch (error) {
-      logger.error('Failed to serve direct call TwiML', { error });
+      logger.error(error);
       return c.json({ error: 'Failed to serve TwiML' }, 500);
     }
   };
