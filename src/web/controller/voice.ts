@@ -66,7 +66,7 @@ export class VoiceController {
     try {
       // Twilio sends form data, not JSON
       const formData = await c.req.parseBody();
-      logger.info('Incoming call data:', formData);
+      logger.info(formData);
 
       const twiml = new twilio.twiml.VoiceResponse();
       const dial = twiml.dial();
