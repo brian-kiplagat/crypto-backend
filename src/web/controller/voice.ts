@@ -64,8 +64,9 @@ export class VoiceController {
 
   public incomingCallResponse = async (c: Context) => {
     try {
-      const body = await c.req.json();
-      logger.info(body);
+      // Twilio sends form data, not JSON
+      const formData = await c.req.parseBody();
+      logger.info('Incoming call data:', formData);
 
       const twiml = new twilio.twiml.VoiceResponse();
       const dial = twiml.dial();
@@ -76,7 +77,7 @@ export class VoiceController {
       c.header('Content-Type', 'text/xml');
       return c.body(twimlResponse);
     } catch (error) {
-      logger.error(error);
+      logger.error('Failed to serve incoming call TwiML', { error });
       return c.json({ error: 'Failed to serve TwiML' }, 500);
     }
   };
