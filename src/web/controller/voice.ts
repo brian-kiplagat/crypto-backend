@@ -69,11 +69,13 @@ export class VoiceController {
       logger.info(formData);
 
       const twiml = new twilio.twiml.VoiceResponse();
-      const dial = twiml.dial();
+      const dial = twiml.dial({
+        record: 'record-from-answer',
+      });
       // Bridge to client (web user)
       dial.client('agent');
       const twimlResponse = twiml.toString();
-      logger.info(twimlResponse);
+
       c.header('Content-Type', 'text/xml');
       return c.body(twimlResponse);
     } catch (error) {
