@@ -32,7 +32,7 @@ export class VoiceController {
 
       return c.json({ token: token.toJwt(), identity });
     } catch (error) {
-      logger.error('Failed to create Twilio token', { error });
+      logger.error(error);
       return c.json({ error: 'Failed to create Twilio token' }, 500);
     }
   };
@@ -77,8 +77,8 @@ export class VoiceController {
       c.header('Content-Type', 'text/xml');
       return c.body(twimlResponse);
     } catch (error) {
-      logger.error('Failed to serve incoming call TwiML', { error });
-      return c.json({ error: 'Failed to serve TwiML' }, 500);
+      logger.error(error);
+      return c.json({ error: 'Failed to serve incoming call TwiML' }, 500);
     }
   };
 
@@ -90,6 +90,7 @@ export class VoiceController {
       if (to) {
         const dial = twiml.dial({
           callerId: env.TWILIO_PHONE_NUMBER,
+          record: 'record-from-answer',
         });
         dial.number(to); // Call the actual phone number
       } else {
@@ -102,7 +103,7 @@ export class VoiceController {
       return c.body(twimlResponse);
     } catch (error) {
       logger.error(error);
-      return c.json({ error: 'Failed to serve TwiML' }, 500);
+      return c.json({ error: 'Failed to serve outgoing call TwiML' }, 500);
     }
   };
 }
