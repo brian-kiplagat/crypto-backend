@@ -108,4 +108,74 @@ export class VoiceController {
       return c.json({ error: 'Failed to serve outgoing call TwiML' }, 500);
     }
   };
+
+  public getRecordings = async (c: Context) => {
+    try {
+      if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) {
+        return c.json({ error: 'Twilio credentials not configured' }, 500);
+      }
+
+      const phoneNumber = c.req.query('phoneNumber');
+      const limit = parseInt(c.req.query('limit') || '20');
+
+      if (!phoneNumber) {
+        return c.json({ error: 'phoneNumber parameter is required' }, 400);
+      }
+
+      const client = twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
+
+      // Get all calls related to that number
+      const calls = await client.calls.list({
+        to: phoneNumber,
+        limit: limit,
+      });
+      type Recording = {
+        callSid: string;
+        from: string;
+        to: string;
+        direction: string;
+        status: string;
+        startTime: Date;
+        endTime: Date;
+        duration: string;
+        recordingSid: string;
+        recordingUrl: string;
+        recordingDuration: string;
+        recordingDateCreated: Date;
+      };
+
+      const recordingsData: Recording[] = [];
+
+      // For each call, fetch its recordings
+      for (const call of calls) {
+        const recordings = await client.recordings.list({ callSid: call.sid });
+
+        recordings.forEach((recording) => {
+          recordingsData.push({
+            callSid: call.sid,
+            from: call.from,
+            to: call.to,
+            direction: call.direction,
+            status: call.status,
+            startTime: call.startTime,
+            endTime: call.endTime,
+            duration: call.duration,
+            recordingSid: recording.sid,
+            recordingUrl: recording.mediaUrl,
+            recordingDuration: recording.duration,
+            recordingDateCreated: recording.dateCreated,
+          });
+        });
+      }
+
+      return c.json({
+        success: true,
+        recordings: recordingsData,
+        total: recordingsData.length,
+      });
+    } catch (error) {
+      logger.error('Failed to fetch recordings', error);
+      return c.json({ error: 'Failed to fetch recordings' }, 500);
+    }
+  };
 }

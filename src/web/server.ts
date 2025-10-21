@@ -312,6 +312,7 @@ export class Server {
     voice.post('/call', createCallValidator, voiceCtrl.createCall);
     voice.get('/outgoing-call-response', voiceCtrl.outgoingCallResponse);
     voice.post('/incoming-call', voiceCtrl.incomingCallResponse);
+    voice.get('/recordings', voiceCtrl.getRecordings);
     api.route('/voice', voice);
   }
 
